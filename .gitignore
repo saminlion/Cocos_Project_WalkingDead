@@ -1,0 +1,12 @@
+WalkingDeadProject/proj.win8.1-universal/
+WalkingDeadProject/proj.win32/
+WalkingDeadProject/proj.win10/
+WalkingDeadProject/proj.ios_mac/
+WalkingDeadProject/proj.android/
+WalkingDeadProject/proj.android-studio/
+WalkingDeadProject/proj.linux/
+WalkingDeadProject/cocos2d/tools/
+WalkingDeadProject/cocos2d/
+WalkingDeadProject/.cocos-project.json
+WalkingDeadProject/CMakeLists.txt
+WalkingDeadProject/bin/debug/android/WalkingDeadProject-debug.apk

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="10" tilewidth="32" tileheight="32" nextobjectid="6">
+ <tileset firstgid="1" name="TestDesert" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="48" columns="8">
+  <image source="tmw_desert_spacing.png" width="265" height="199"/>
+ </tileset>
+ <tileset firstgid="49" name="Meta" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="2" columns="2">
+  <image source="metaset.png" width="67" height="34"/>
+  <tile id="0">
+   <properties>
+    <property name="Ground" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="Fall" type="bool" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background" width="80" height="10">
+  <data encoding="base64" compression="zlib">
+   eJyTY2BgkBvFo3gUj+JRPIpH8SgexSMGM2HBhORJUadPoXn0cCcl5nBhwcjqsMnTUx0+fdSynxJzAElzU84=
+  </data>
+ </layer>
+ <objectgroup name="Objects">
+  <object id="1" name="SpawnPoint" x="113.583" y="275.917"/>
+ </objectgroup>
+ <layer name="MetaInfo" width="80" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwSgYBSMJGGLBRkgYmzw+daNgFJACABuHA9s=
+  </data>
+ </layer>
+ <objectgroup name="EnemySpawnPoints">
+  <object id="4" name="DragonSpawn2" x="1104.17" y="242.167"/>
+  <object id="5" name="DragonSpawn" x="782.333" y="244"/>
+ </objectgroup>
+</map>
