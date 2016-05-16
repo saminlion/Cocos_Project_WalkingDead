@@ -27,12 +27,14 @@ std::vector<Sprite*> Enemy::CreateDragon(std::vector<Sprite*> positions)
 	for (int i = 0; i < positions.size(); i++) //for (int i = 0; i < 10; i++)
 	{
 		dragonSprite = (Sprite*)(positions.at(i));
-			
-		dragonSprite =	Sprite::create("images/Enemy/Dragon_Anim_1.png");
+
+		dragonSprite = Sprite::create("images/Enemy/Dragon_Anim_1.png");
 
 		dragonAnimation = Character::createAnimationMultiSprite("images/Enemy/Dragon_Anim_%d.png", 8, 0.2f);
 
 		dragonSprite->setTag(i);
+
+		dragonSprite->setName("Dragon");
 
 		dragonAnimate = Animate::create(dragonAnimation);
 
@@ -46,13 +48,17 @@ std::vector<Sprite*> Enemy::CreateDragon(std::vector<Sprite*> positions)
 	return dragonSprites;
 }
 
-Vector<Sprite*> Enemy::CreateBird()
+std::vector<Sprite*> Enemy::CreateBird(std::vector<Sprite*> positions)
 {
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < positions.size(); i++) //for (int i = 0; i < 10; i++)
 	{
 		auto birdSprite = Sprite::create("images/Enemy/BirdEnemyIdleSprite.png");
 
 		//birdAnimation = Character::createAnimationMultiSprite("images/Enemy/Dragon_Anim_%d.png", 8, 0.2f);
+
+		birdSprite->setTag(i);
+
+		birdSprite->setName("Bird");
 
 		birdSprite->setScale(1.f);
 
@@ -60,7 +66,7 @@ Vector<Sprite*> Enemy::CreateBird()
 
 		//Character::switchingAction(birdSprite, birdAnimate, true);
 
-		birdSprites.pushBack(birdSprite);
+		birdSprites.push_back(birdSprite);
 	}
 
 	return birdSprites;
@@ -73,6 +79,10 @@ Vector<Sprite*> Enemy::CreateDK()
 		auto dkSprite = Sprite::create("images/Enemy/CursedKnight.png");
 
 		//dkAnimation = Character::createAnimationMultiSprite("images/Enemy/Dragon_Anim_%d.png", 8, 0.2f);
+
+		dkSprite->setTag(i);
+
+		dkSprite->setName("DK");
 
 		dkSprite->setScale(1.f);
 

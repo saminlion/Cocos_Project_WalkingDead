@@ -5,6 +5,8 @@ USING_NS_CC;
 //#define MASK_PLAYER = ENEMY;
 //#define MASK_ENEMY = PLAYER;
 
+
+
 Scene* HelloWorld::createScene()
 {
 	auto scene = Scene::create();
@@ -28,6 +30,8 @@ bool HelloWorld::init()
 	player = new Player();
 	enemy = new Enemy();
 
+	bodyData = new BodyUserData;
+
 	killSuccess = false;
 	isTransFormed = false;
 	destoryFire = false;
@@ -39,8 +43,11 @@ bool HelloWorld::init()
 	tmap = TMXTiledMap::create("tile/Platform.tmx");
 	background = tmap->getLayer("Background");
 	playerSpawnPoint = tmap->getObjectGroup("Objects");
-	enemySpawnPoint = tmap->getObjectGroup("EnemySpawnPoints");
-	character->getEnemySpawnPointPositions(enemySpawnPoint);
+	dragonSpawnPoint = tmap->getObjectGroup("DragonSpawnPoints");
+	birdSpawnPoint = tmap->getObjectGroup("BirdSpawnPoints");
+	character->getDragonSpawnPointPositions(dragonSpawnPoint);
+	character->getBirdSpawnPointPositions(birdSpawnPoint);
+
 	this->addChild(tmap, -1, 11);
 
 	attackButton = Sprite::create("images/UI/AttackButton.png");
@@ -82,17 +89,18 @@ bool HelloWorld::init()
 #pragma endregion
 
 #pragma region Init Enemy Character - Dragon
-		
+
+	dragonPostions = character->setDragonPosition();
+	birdPositions = character->setBirdPosition();
+	//vector<Sprite*> dkPositions = character->setDKPosition();
+
 	positions = character->setEnemyPosition();
 
-	dragons = enemy->CreateDragon(positions);
+	log("Positions Size : %d", positions.size());
 
 	for (int i = 0; i < positions.size(); i++)
 	{
 		position = (Sprite*)(positions.at(i));
-
-		log("pobj tag : %d", position->getTag());
-		log("pobj position : %f .... %f", position->getPositionX(), position->getPositionY());
 
 		tmap->addChild(position);
 
@@ -100,11 +108,6 @@ bool HelloWorld::init()
 
 		positionDummies.push_back(positionDummy);
 	}
-
-	log("Dummy Position 2 : %f ..... %f", positionDummy.x, positionDummy.y);
-
-	//log("Dummy Position : %f ..... %f", positionDummy.x, positionDummy.y);
-		
 
 #pragma endregion
 
@@ -119,6 +122,76 @@ bool HelloWorld::init()
 	//this->schedule(schedule_selector(HelloWorld::ShootFire), 1.0f);
 
 	return true;
+}
+
+void HelloWorld::SpawnEnemy()
+{
+	dragons = enemy->CreateDragon(dragonPostions);
+	birds = enemy->CreateBird(birdPositions);
+
+#pragma region Dragon
+
+	log("Dragons Size : %d", dragons.size());
+	log("Birds Size : %d", birds.size());
+
+	for (int i = 0; i < dragons.size(); i++)
+	{
+		dragon = (Sprite*)dragons.at(i);
+
+		positionDummy = positionDummies.at(i);
+
+		dragon->setPosition(positionDummy.x, positionDummy.y - 30.0f);
+
+		//log("Check Dragon Name : %s", dragon->getName().c_str());
+		log("Check Dragon : %d", dragon->getTag());
+
+		auto eBody = this->addBody(positionDummy, dragon->getContentSize() / 2, b2_dynamicBody, dragon, 4, ENEMY, PLAYER);
+
+		//bodyData->Name = "Dragon";
+		//bodyData->Tag = i;
+
+		////string* eBodyName = new string("Dragon");
+
+		//eBody->SetUserData(bodyData);
+
+		//enemyBodies->addObject(eBody);
+		enemyBodies.push_back(eBody);
+	}
+
+	for (int i = 0; i < birds.size(); i++)
+	{
+		bird = (Sprite*)birds.at(i);
+
+		positionDummy = positionDummies.at(i);
+
+		bird->setPosition(positionDummy.x, positionDummy.y - 30.0f);
+
+		log("Check Bird : %d", bird->getTag());
+
+		auto eBody = this->addBody(positionDummy, bird->getContentSize() / 2, b2_dynamicBody, bird, 4, ENEMY, PLAYER);
+
+		//bodyData->Name = "Bird";
+		//bodyData->Tag = i;
+
+		////string* eBodyName = new string("Dragon");
+
+		//eBody->SetUserData(bodyData);
+
+		enemyBodies.push_back(eBody);
+	}
+
+	log("EnemyBodies Size : %d", enemyBodies.size()); //enemyBodies.size());
+
+	for (int i = 0; i < enemyBodies.size(); i++)
+	{
+		auto eb = (b2Body*)enemyBodies.at(i);
+		auto eSP = (Sprite*)eb->GetUserData();
+
+		enemyDatas.pushBack(eSP);
+		//enemyDatas.push_back(eSP);
+	}
+
+#pragma endregion
 }
 
 void HelloWorld::ShootFire(float dt)
@@ -140,44 +213,61 @@ void HelloWorld::EnemyDeath(float dt)
 
 	killSuccess = false;
 
-	clearSpriteBody(20);
+	clearSpriteBody();
 }
 
-void HelloWorld::FireDeath(float dt)
+//void HelloWorld::FireDeath(float dt)
+//{
+//	log("CallFunc");
+//
+//	destoryFire = false;
+//
+//	auto fireAnimation = character->createAnimationMultiSprite("images/Effect/Dragon_Fire_Effect_%d.png", 5, 0.2f);
+//	
+//	auto fireAnimate = Animate::create(fireAnimation);
+//
+//	auto fireSeq = Sequence::create(fireAnimate, DelayTime::create(0.5f), CallFunc::create(CC_CALLBACK_0(HelloWorld::clearSpriteBody, this, 21)), nullptr);
+//
+//	fireSprite->runAction(fireSeq);
+//}
+
+void HelloWorld::clearSpriteBody()
 {
-	log("CallFunc");
+	log("EnemyDatas Size : %d", enemyDatas.size());
+	log("EnemyBoides Size : %d", enemyBodies.size());
+	log("Position Size : %d", positions.size());
 
-	destoryFire = false;
-
-	auto fireAnimation = character->createAnimationMultiSprite("images/Effect/Dragon_Fire_Effect_%d.png", 5, 0.2f);
-	
-	auto fireAnimate = Animate::create(fireAnimation);
-
-	auto fireSeq = Sequence::create(fireAnimate, DelayTime::create(0.5f), CallFunc::create(CC_CALLBACK_0(HelloWorld::clearSpriteBody, this, 21)), nullptr);
-
-	fireSprite->runAction(fireSeq);
-}
-
-void HelloWorld::clearSpriteBody(int tag)
-{
-	log("Clear Start");
-
-	for (b2Body *b = _world->GetBodyList(); b; b = b->GetNext())
+	for (int i = 0; i < enemyDatas.size(); i++)
 	{
-		if (b->GetUserData() != nullptr)
+		auto spriteData = (Sprite*)enemyDatas.at(i);
+		auto spriteBody = (b2Body*)enemyBodies.at(i);
+
+		if (spriteData == hitSprite && spriteBody == hitBody)//&& !_world->IsLocked()
 		{
-			Sprite* spritedata = (Sprite*)b->GetUserData();
+			log("Clear Start");
 
-			if (spritedata->getTag() == tag )//&& !_world->IsLocked()
-			{
-				this->removeChild(spritedata);
+			enemyDatas.eraseObject(hitSprite, true);
+			//enemyBodies.erase(enemyBodies.begin());
+			//enemyBodies.clear();
 
-				_world->DestroyBody(b);
+			enemyBodies._Pop_back_n(hitIndex);
+			//enemyBodies.erase(enemyBodies.at(hitIndex));
 
-				log("Clear Done");
+			positions.pop_back();
 
-				break;
-			}
+			//enemyDatas.re
+			
+			this->removeChild(hitSprite, true);
+
+			_world->DestroyBody(hitBody);
+			
+			log("Clear Done");
+
+			log("EnemyDatas Size : %d", enemyDatas.size());
+			log("EnemyBoides Size : %d", enemyBodies.size());
+			log("Position Size : %d", positions.size());
+
+			break;
 		}
 	}
 }
@@ -208,7 +298,7 @@ void HelloWorld::AfterAction(float dt)
 		}
 
 		chargeCount = 0.0f;
-		
+
 		attackButton->setColor(Color3B::WHITE);
 	}
 
@@ -282,7 +372,7 @@ bool HelloWorld::createBox2dWorld(bool debug)
 	}
 
 	bDrag = false;
-	
+
 #pragma region Create EffectBody 
 	effectDummy1 = Sprite::create("images/Dummy.png");
 	effectDummy2 = Sprite::create("images/Dummy.png");
@@ -297,31 +387,15 @@ bool HelloWorld::createBox2dWorld(bool debug)
 	effectNormalBody = this->addBody(player->playerPos, Size(effectDummy1->getContentSize() / 4), b2_staticBody, effectDummy1, 0, PLAYER, ENEMY | FIRE);
 	effectChargeBody = this->addBody(player->playerPos, Size(effectDummy2->getContentSize() / 4), b2_staticBody, effectDummy2, 1, PLAYER, ENEMY | FIRE);
 	effectJumpBody = this->addBody(player->playerPos, Size(effectDummy3->getContentSize() / 4), b2_staticBody, effectDummy3, 2, PLAYER, ENEMY | FIRE);
-#pragma endregion
-	
-#pragma region EnemyBody
-	
-	for (int i = 0; i < dragons.size(); i++)
-	{
-		dragon = (Sprite*)dragons.at(i);
-
-		positionDummy = positionDummies.at(i);
-
-		dragon->setPosition(positionDummy.x ,positionDummy.y - 30.0f);
-
-		auto eBody = this->addBody(positionDummy, dragon->getContentSize() / 2, b2_dynamicBody, dragon, 4, ENEMY, PLAYER);
-
-		enemyBodies.push_back(eBody);
-		
-		log("Dragon position : %f .... %f", dragon->getPositionX(), dragon->getPositionY());
-	}
 
 #pragma endregion
-	
+
+	this->SpawnEnemy();
+
 #pragma region FireBody
-		
+
 #pragma endregion
-	
+
 	_world->SetContactListener(this);
 
 	return true;
@@ -339,6 +413,11 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		bodyDef.position.Set((point.x + 100) / PTM_RATIO, (point.y + 30) / PTM_RATIO);
 		this->addChild(sprite, 2, 10);
 		bodyDef.userData = sprite;
+
+		//bodyData->Name = "Effect";
+		//bodyData->Tag = 0;
+
+		//body->SetUserData(bodyData);
 
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
@@ -371,6 +450,11 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		this->addChild(sprite, 2, 10);
 		bodyDef.userData = sprite;
 
+		//bodyData->Name = "Effect";
+		//bodyData->Tag = 0;
+
+		//body->SetUserData(bodyData);
+
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
 
@@ -400,6 +484,11 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		bodyDef.position.Set((point.x) / PTM_RATIO, (point.y + 30) / PTM_RATIO);
 		this->addChild(sprite, 2, 10);
 		bodyDef.userData = sprite;
+
+		//bodyData->Name = "Effect";
+		//bodyData->Tag = 0;
+
+		//body->SetUserData(bodyData);
 
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
@@ -431,13 +520,18 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		this->addChild(sprite, 2, 21);
 		bodyDef.userData = sprite;
 
+		//bodyData->Name = "Fire";
+		//bodyData->Tag = 2;
+
+		//body->SetUserData(bodyData);
+
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
 
 		b2FixtureDef fixtureDef;
 		b2PolygonShape dynamicBox;
-		
-		dynamicBox.SetAsBox(size.width/ PTM_RATIO, size.height / PTM_RATIO);
+
+		dynamicBox.SetAsBox(size.width / PTM_RATIO, size.height / PTM_RATIO);
 
 		fixtureDef.filter.categoryBits = categoryBits;
 		fixtureDef.filter.maskBits = maskBits;
@@ -458,7 +552,9 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 	else
 	{
 		bodyDef.position.Set(((point.x) / PTM_RATIO), ((point.y) / PTM_RATIO));
-		this->addChild(sprite, 2, 20);
+		//sprite->setName("Enemy");
+
+		this->addChild(sprite, 2);
 		bodyDef.userData = sprite;
 
 		body = _world->CreateBody(&bodyDef);
@@ -491,7 +587,7 @@ void HelloWorld::BeginContact(b2Contact* contact)
 	//fixA가 충격을 받는 물체 fixB는 충격을 주는 물체 
 	b2Fixture* fixA = contact->GetFixtureA();
 	b2Fixture* fixB = contact->GetFixtureB();
-	
+
 	b2Body* bodyA = fixA->GetBody();
 	b2Body* bodyB = fixB->GetBody();
 
@@ -500,13 +596,37 @@ void HelloWorld::BeginContact(b2Contact* contact)
 
 	log("%d", impact->getTag());
 	log("%d", impacted->getTag());
-	
-	if (impact->getTag() == 10 && impacted->getTag() == 20)
-	{
-		log("Dragon Vs Player");
-		bodyB->ApplyForce(b2Vec2(1000, 800), bodyB->GetWorldCenter(), true);
 
-		killSuccess = true;
+	log("Impact Name : %s", impact->getName().c_str());
+	log("Impacted Name : %s", impacted->getName().c_str());
+
+
+	if (impact->getTag() == 10 && impacted->getName() == "Dragon" || impact->getTag() == 10 && impacted->getName() == "Bird" || impact->getTag() == 10 && impacted->getName() == "DK")
+	{
+		log("Enemy Vs Player");
+
+		for (int i = 0; i < enemyBodies.size(); i++)
+		{
+			if (bodyA == enemyBodies.at(i))
+			{
+				hitSprite = (Sprite*)bodyA->GetUserData();
+
+				//hitSprite->setVisible(false);
+				log("HitSprite Name : %s", hitSprite->getName().c_str());
+
+				log("Vector Index Number : %d", i);
+
+				hitIndex = i;
+
+				hitBody = enemyBodies.at(i);
+
+				hitBody->ApplyForce(b2Vec2(1000, 800), hitBody->GetWorldCenter(), true);
+
+				killSuccess = true;
+
+				break;
+			}
+		}
 	}
 
 	if (impact->getTag() == 10 && impacted->getTag() == 21)
@@ -534,80 +654,95 @@ void HelloWorld::tick(float dt)
 		{
 			Sprite *spriteData = (Sprite*)b->GetUserData();
 
-			if (spriteData->getTag() != 20)
+			if (spriteData->getName() != "Dragon" || spriteData->getName() != "Bird" || spriteData->getName() != "DK")
 			{
 				spriteData->setPosition(Vec2(b->GetPosition().x * PTM_RATIO, b->GetPosition().y * PTM_RATIO));
 				spriteData->setRotation(-1 * CC_RADIANS_TO_DEGREES(b->GetAngle()));
 			}
+			else
+			{
+				//log("Check SpriteData Name : %s", spriteData->getName().c_str());
+			}
 		}
 	}
 
-	vector<Sprite*> enemyDatas;
+	//log("EnemyDatas Size : %d", enemyDatas.size());
+	//log("EnemyBoides Size : %d", enemyBodies.size());
+	//log("Position Size : %d", positions.size());
 
-	for (auto eb : enemyBodies)
+	if (enemyDatas.size() != 0)
 	{
-		auto eSP = (Sprite*)eb->GetUserData();
+		for (int i = 0; i < enemyDatas.size(); i++)
+		{
+			position = (Sprite*)positions.at(i);
 
-		//if (eSP->getTag() == 20)
-		//{
-			enemyDatas.push_back(eSP);
-		//}
+			auto eSp = (Sprite*)enemyDatas.at(i);
+
+			//enemyDatas.erase(enemyDatas.begin() + i);
+
+			//log("Check enemyData Name : %s", eSp->getName().c_str());
+
+			if (!killSuccess)
+			{
+				if (eSp != hitSprite && eSp != nullptr)
+				{
+					positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
+
+					//log("PositionDummy : %f .... %f", positionDummy.x, positionDummy.y);
+
+					enemyBody = (b2Body*)enemyBodies.at(i);
+
+					enemyBodyPos = b2Vec2(enemyBody->GetWorldCenter());
+
+					enemyBody->SetTransform(b2Vec2(positionDummy.x / PTM_RATIO, positionDummy.y / PTM_RATIO), 0);
+
+					if (eSp == nullptr)
+					{
+						log("null");
+					}
+					else
+					{
+						log("something");
+					}
+
+					eSp->setPosition(positionDummy);
+
+					//log("SpriteData Position : %f .... %f", eSp->getPositionX(), eSp->getPositionY());
+
+					eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
+				}
+			}
+			else
+			{
+				if (eSp == hitSprite)
+				{
+					eSp->setPosition(Vec2(hitBody->GetPosition().x * PTM_RATIO, hitBody->GetPosition().y * PTM_RATIO));
+					eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(hitBody->GetAngle()));
+
+					//log("hitSprite position : %f ... %f", eSp->getPositionX(), eSp->getPositionY());
+					//log("enemyBody Position : %f ... %f", hitBody->GetPosition().x, hitBody->GetPosition().y);
+
+					deathScale -= 0.006f;
+
+					if (deathScale < 0.0f)
+					{
+						deathScale = 0.f;
+					}
+
+					eSp->setScale(deathScale);
+
+					bool oneTime = this->isScheduled(schedule_selector(HelloWorld::EnemyDeath));
+
+					if (!oneTime)
+					{
+						this->scheduleOnce(schedule_selector(HelloWorld::EnemyDeath), 3);
+						oneTime = true;
+					}
+				}
+				//enemyDatas.pop_back();
+			}
+		}
 	}
-
-	log("Enemy Datas : %d", enemyDatas.size());
-
-	//if (enemyDatas.size() != 0)
-	//{
-	//	log("Enemy Datas : %d", enemyDatas.size());
-
-	//	for (int i = 0; i < enemyDatas.size(); i++)
-	//	{
-	//		position = (Sprite*)positions.at(i);
-
-	//		auto eSp = (Sprite*)enemyDatas.at(i);
-
-	//		if (!killSuccess)
-	//		{
-	//			positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
-
-	//			log("PositionDummy : %f .... %f", positionDummy.x, positionDummy.y);
-
-	//			enemyBody = enemyBodies.at(i);
-
-	//			enemyBodyPos = b2Vec2(enemyBody->GetWorldCenter());
-
-	//			enemyBody->SetTransform(b2Vec2(positionDummy.x / PTM_RATIO, positionDummy.y / PTM_RATIO), 0);
-
-	//			eSp->setPosition(positionDummy);
-
-	//			log("SpriteData Position : %f .... %f", eSp->getPositionX(), eSp->getPositionY());
-
-	//			eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
-	//		}
-	//		else
-	//		{
-	//			eSp->setPosition(Vec2(enemyBody->GetPosition().x * PTM_RATIO, enemyBody->GetPosition().y * PTM_RATIO));
-	//			eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
-
-	//			deathScale -= 0.006f;
-
-	//			if (deathScale < 0.0f)
-	//			{
-	//				deathScale = 0.f;
-	//			}
-
-	//			dragon->setScale(deathScale);
-
-	//			bool oneTime = this->isScheduled(schedule_selector(HelloWorld::EnemyDeath));
-
-	//			if (!oneTime)
-	//			{
-	//				this->scheduleOnce(schedule_selector(HelloWorld::EnemyDeath), 3);
-	//				oneTime = true;
-	//			}
-	//		}
-	//	}
-	//}
 
 	if (countStart)
 	{
@@ -653,16 +788,17 @@ void HelloWorld::tick(float dt)
 				this->schedule(schedule_selector(HelloWorld::ShootFire), 2);
 			}
 		}
-		else if (destoryFire)
-		{
-			bool oneTime = this->isScheduled(schedule_selector(HelloWorld::FireDeath));
 
-			if (!oneTime)
-			{
-				this->scheduleOnce(schedule_selector(HelloWorld::FireDeath), 1);
-				oneTime = true;
-			}
-		}
+		//else if (destoryFire)
+		//{
+		//	bool oneTime = this->isScheduled(schedule_selector(HelloWorld::FireDeath));
+
+		//	if (!oneTime)
+		//	{
+		//		this->scheduleOnce(schedule_selector(HelloWorld::FireDeath), 1);
+		//		oneTime = true;
+		//	}
+		//}
 	}
 }
 
@@ -752,9 +888,9 @@ bool HelloWorld::onTouchBegan(Touch* touch, Event* event)
 void HelloWorld::onTouchEnded(Touch* touch, Event* event)
 {
 	countStart = false;
-	
+
 	if (isAttack)
-	{			
+	{
 		attackButton->setColor(Color3B::GRAY);
 
 		auto effect = Sprite::create();

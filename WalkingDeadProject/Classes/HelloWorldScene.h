@@ -20,8 +20,18 @@ enum _entityCategory {
 	PLAYER = 0x0004,
 };
 
+struct BodyUserData {
+	int Tag;
+	string Name;
+};
+
 class HelloWorld : public cocos2d::LayerColor, public b2ContactListener
 {
+#pragma region InitGame
+protected:
+	virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
+	cocos2d::CustomCommand _customCommand;
+
 public:
 	static cocos2d::Scene* createScene();
 
@@ -29,7 +39,6 @@ public:
 
 	CREATE_FUNC(HelloWorld);
 
-#pragma region InitGame
 	float backgroud_x;
 
 	int count;
@@ -38,18 +47,34 @@ public:
 	Character* character;
 	Player* player;
 	Enemy* enemy;
+	BodyUserData* bodyData;
 
 	~HelloWorld();
+
 	void MoveMap(float f);
 	void detectGround(float bx);
 
 	void tick(float dt);
 	bool createBox2dWorld(bool debug);
-	void clearSpriteBody(int tag);
+	void clearSpriteBody();
 
 	b2Body* addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* sprite, int tag, uint16 categoryBits, uint16 maskBits);
 
 	Vec2 convertPosition(float px, float cx, float py, float cy);
+
+	virtual void onEnter();
+	virtual void onExit();
+
+	virtual bool onTouchBegan(Touch* touch, Event* event);
+	virtual void onTouchEnded(Touch* touch, Event* event);
+
+	void AfterAction(float dt);
+	void EnemyDeath(float dt);
+	void ShootFire(float dt);
+	//void FireDeath(float dt);
+	void SpawnEnemy();
+	void onDraw(const cocos2d::Mat4& transform, uint32_t flags);
+	void BeginContact(b2Contact* contact);
 
 	////////////////////////////////////////
 	GLESDebugDraw* m_debugDraw;
@@ -61,36 +86,46 @@ public:
 	bool isJumped;
 	bool countStart;
 	bool isTransFormed;
-	
+
+	int initialSize;
+
 	ProgressTimer* progressTimer;
 
 	b2Body *dragBody;
-	//b2Body *gbody;
 	b2Body* enemyBody;
 	vector<b2Body*> enemyBodies;
-	vector<b2Body*> gbodies;
-	vector<Sprite*> enemyDatas;
+	Vector<Sprite*> enemyDatas;
+	//Array* enemyDatas;
+	//Array* enemyBodies;
 
 	b2Body* effectNormalBody;
 	b2Body* effectChargeBody;
 	b2Body* effectJumpBody;
 	b2Body* projectileBody;
 
-	//Vector<Sprite*> fireSprites;
-	//Vector<b2Body*> fireBodies;
+	b2Body* hitBody;
+	Sprite* hitSprite;
+
 	vector<Sprite*> positions;
 	vector<Sprite*> fires;
-	
+	vector<Sprite*> dragons;
+	vector<Sprite*> birds;
+	//Array* dragons;
+	//Array* birds;
+
+	vector<Sprite*> dragonPostions;
+	vector<Sprite*> birdPositions;
+
+	Sprite* dyingEnemy;
 	Sprite* fireSprite;
 	Sprite* dragon;
+	Sprite* bird;
 	Sprite* position;
-
-	vector<Sprite*> dragons;
 
 	Sprite* effectDummy1;
 	Sprite* effectDummy2;
 	Sprite* effectDummy3;
-	
+
 	Sprite* attackButton;
 	Sprite* jumpButton;
 	Sprite* transformButton;
@@ -103,7 +138,9 @@ public:
 	cocos2d::TMXLayer* test;
 
 	TMXObjectGroup* playerSpawnPoint;
-	TMXObjectGroup* enemySpawnPoint;
+	TMXObjectGroup* dragonSpawnPoint;
+	TMXObjectGroup* birdSpawnPoint;
+	TMXObjectGroup* dkSpanwPoint;
 
 	vector<Vec2> positionDummies;
 	Vec2 positionDummy;
@@ -116,6 +153,7 @@ public:
 	float inverseTransformCount = 0.f;
 	float attackDelay = 2.0f;
 
+	int hitIndex = 0;
 	int numberOfFire = 10;
 	int vx;
 	int vy;
@@ -124,24 +162,6 @@ public:
 
 	bool killSuccess;
 	float deathScale = 1.f;
-
-	virtual void onEnter();
-	virtual void onExit();
-
-	virtual bool onTouchBegan(Touch* touch, Event* event);
-	virtual void onTouchEnded(Touch* touch, Event* event);
-
-	void AfterAction(float dt);
-	void EnemyDeath(float dt);
-	void ShootFire(float dt);
-	void FireDeath(float dt);
-	
-	void onDraw(const cocos2d::Mat4& transform, uint32_t flags);
-
-protected:
-	virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
-	cocos2d::CustomCommand _customCommand;
 #pragma endregion
-	void BeginContact(b2Contact* contact);
 };
 #endif // __HELLOWORLD_SCENE_H__

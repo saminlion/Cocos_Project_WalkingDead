@@ -16,15 +16,15 @@ public:
 	vector<Sprite*> enemySprites;
 
 	std::vector<Sprite*> CreateDragon(std::vector<Sprite*> positions);
-	Vector<Sprite*> CreateBird();
+	std::vector<Sprite*> CreateBird(std::vector<Sprite*> positions);
 	Vector<Sprite*> CreateDK();
-	
+
 	vector<Sprite*> dragonSprites;
+	std::vector<Sprite*> birdSprites;
 
 	Sprite* fireSprite;
 	Sprite* dragonSprite;
 
-	Vector<Sprite*> birdSprites;
 	Vector<Sprite*> dkSprites;
 
 	Animation* dragonAnimation;

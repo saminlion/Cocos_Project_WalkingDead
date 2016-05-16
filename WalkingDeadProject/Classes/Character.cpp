@@ -62,37 +62,43 @@ Animation* Character::createAnimationMultiSprite(const char* spriteLocation, int
 
 void Character::switchingAction(Sprite* actionSprite, Action* newAction, bool repeat)
 {
-
-	////int i != newAction->getTag();
-	//auto prevAction = actionSprite->getActionManager();
-
-	//for (int i = 0; i < actionSprite->getNumberOfRunningActions(); i++)
-	//{
-	//	auto prevAction = actionSprite->getActionByTag(i);
-
-	//	bool checkAction = prevAction->isDone();
-
-	//	if (i != newAction->getTag())
-	//	{
-			if (!repeat)
-			{
-				actionSprite->stopAllActions();
-				actionSprite->runAction(newAction);
-			}
-			else if (repeat)
-			{
-				auto rep = RepeatForever::create((ActionInterval*)newAction);
-				actionSprite->runAction(rep);
-			}
-	//	}
-	//}
+	if (!repeat)
+	{
+		actionSprite->stopAllActions();
+		actionSprite->runAction(newAction);
+	}
+	else if (repeat)
+	{
+		auto rep = RepeatForever::create((ActionInterval*)newAction);
+		actionSprite->runAction(rep);
+	}
 }
 
-void Character::getEnemySpawnPointPositions(TMXObjectGroup* objects)
+vector<Sprite*> Character::setDragonPosition()
 {
-	enemySPs = objects->getObjects();
+	log("Dragon Spawn Point Size : %d", _dragonPositions.size());
 
-	for (auto enemySP : enemySPs)
+	for (int i = 0; i < _dragonPositions.size(); i++)
+	{
+		auto vec2 = (Vec2)_dragonPositions.at(i);
+
+		initPositionSprite = Sprite::create("images/Dummy.png");
+
+		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
+
+		initPositionSprite->setTag(i);
+
+		dragonPositions.push_back(initPositionSprite);
+	}
+
+	return dragonPositions;
+}
+
+void Character::getDragonSpawnPointPositions(TMXObjectGroup* objects)
+{
+	dragonSPs = objects->getObjects();
+
+	for (auto enemySP : dragonSPs)
 	{
 		auto VMobj = enemySP.asValueMap();
 
@@ -102,12 +108,47 @@ void Character::getEnemySpawnPointPositions(TMXObjectGroup* objects)
 		Vec2 initPosition = Vec2(vx, vy);
 
 		_spawnPositions.push_back(initPosition);
-
-		log("Enemy Pos : %f ...... %f", initPosition.x, initPosition.y);
+		_dragonPositions.push_back(initPosition);
 	}
 }
 
-vector<Sprite*> Character::setEnemyPosition()
+vector<Sprite*> Character::setBirdPosition()
+{
+	for (int i = 0; i < _birdPositions.size(); i++)
+	{
+		auto vec2 = (Vec2)_birdPositions.at(i);
+
+		initPositionSprite = Sprite::create("images/Dummy.png");
+
+		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
+
+		initPositionSprite->setTag(i);
+
+		birdPositions.push_back(initPositionSprite);
+	}
+
+	return birdPositions;
+}
+
+void Character::getBirdSpawnPointPositions(TMXObjectGroup* objects)
+{
+	birdSPs = objects->getObjects();
+
+	for (auto enemySP : birdSPs)
+	{
+		auto VMobj = enemySP.asValueMap();
+
+		int vx = VMobj["x"].asInt();
+		int vy = VMobj["y"].asInt();
+
+		Vec2 initPosition = Vec2(vx, vy);
+
+		_birdPositions.push_back(initPosition);
+		_spawnPositions.push_back(initPosition);
+	}
+}
+
+vector<Sprite*> Character::setDKPosition()
 {
 	for (int i = 0; i < _spawnPositions.size(); i++)
 	{
@@ -117,14 +158,47 @@ vector<Sprite*> Character::setEnemyPosition()
 
 		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
 
-		log("Set Enemy Position : %f ..... %f", vec2.x, vec2.y);
+		initPositionSprite->setTag(i);
+
+		dkPositions.push_back(initPositionSprite);
+	}
+
+	return dkPositions;
+}
+
+void Character::getDKSpawnPointPositions(TMXObjectGroup* objects)
+{
+	dkSPs = objects->getObjects();
+
+	for (auto enemySP : dkSPs)
+	{
+		auto VMobj = enemySP.asValueMap();
+
+		int vx = VMobj["x"].asInt();
+		int vy = VMobj["y"].asInt();
+
+		Vec2 initPosition = Vec2(vx, vy);
+
+		_spawnPositions.push_back(initPosition);
+	}
+}
+
+vector<Sprite*> Character::setEnemyPosition()
+{
+	log("SpawnPoints Size : %d", _spawnPositions.size());
+
+	for (int i = 0; i < _spawnPositions.size(); i++)
+	{
+		auto vec2 = (Vec2)_spawnPositions.at(i);
+
+		initPositionSprite = Sprite::create("images/Dummy.png");
+
+		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
 
 		initPositionSprite->setTag(i);
 
-		positions.push_back(initPositionSprite);
-
-		log("Check Tag : %d", initPositionSprite->getTag());
+		enemyPositions.push_back(initPositionSprite);
 	}
 
-	return positions;
+	return enemyPositions;
 }

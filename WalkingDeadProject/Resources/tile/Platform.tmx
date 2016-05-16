@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="10" tilewidth="32" tileheight="32" nextobjectid="6">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="10" tilewidth="32" tileheight="32" nextobjectid="8">
  <tileset firstgid="1" name="TestDesert" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="48" columns="8">
   <image source="tmw_desert_spacing.png" width="265" height="199"/>
  </tileset>
@@ -29,8 +29,12 @@
    eJxjYBgFo2AUjIJRMApGwSgYBSMJGGLBRkgYmzw+daNgFJACABuHA9s=
   </data>
  </layer>
- <objectgroup name="EnemySpawnPoints">
+ <objectgroup name="DragonSpawnPoints">
   <object id="4" name="DragonSpawn2" x="1104.17" y="242.167"/>
   <object id="5" name="DragonSpawn" x="782.333" y="244"/>
+ </objectgroup>
+ <objectgroup name="BirdSpawnPoints">
+  <object id="6" name="BirdSpawnPoint" x="912.5" y="242"/>
+  <object id="7" name="BirdSpawnPoint2" x="1007.5" y="240"/>
  </objectgroup>
 </map>
