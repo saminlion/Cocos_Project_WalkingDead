@@ -20,9 +20,12 @@ private:
 	vector<Vec2> _dkPositions;
 
 public:
+	Character();
 	void switchingAction(Sprite* actionSprite, Action* newAction, bool repeat);
 	Animation* createAnimationSpriteSheet(Texture2D* texture, int numberOflineSprite, int numberOfSprites, float delay, float width, float height);
 	Animation* createAnimationMultiSprite(const char* spriteLocation, int numberOfSprites, float delay);
+
+	void ClearOnce();
 
 	vector<Sprite*> setEnemyPosition();
 

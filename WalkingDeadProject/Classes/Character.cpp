@@ -2,6 +2,31 @@
 
 #define PTM_RATIO 32
 
+Character::Character()
+{
+	log("Start Character Class");
+	_spawnPositions.clear();
+	_dragonPositions.clear();
+	_birdPositions.clear();
+	_dkPositions.clear();
+	enemyPositions.clear();
+	dragonSPs.clear();
+	birdSPs.clear();
+	dkSPs.clear();
+}
+
+void Character::ClearOnce()
+{
+	_spawnPositions.clear();
+	_dragonPositions.clear();
+	_birdPositions.clear();
+	_dkPositions.clear();
+	enemyPositions.clear();
+	dragonSPs.clear();
+	birdSPs.clear();
+	dkSPs.clear();
+}
+
 /**
 * Return Sprite createAnimation.
 *
@@ -114,6 +139,8 @@ void Character::getDragonSpawnPointPositions(TMXObjectGroup* objects)
 
 vector<Sprite*> Character::setBirdPosition()
 {
+	log("Bird Spawn Point Size : %d", _birdPositions.size());
+
 	for (int i = 0; i < _birdPositions.size(); i++)
 	{
 		auto vec2 = (Vec2)_birdPositions.at(i);

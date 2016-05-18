@@ -20,6 +20,17 @@ enum _entityCategory {
 	PLAYER = 0x0004,
 };
 
+enum StageNumber
+{
+	Stage0 = 0,
+	Stage1 = 1,
+	Stage2,
+	Stage3,
+	Stage4,
+	Stage5,
+	Stage6
+};
+
 struct BodyUserData {
 	int Tag;
 	string Name;
@@ -39,7 +50,7 @@ public:
 
 	CREATE_FUNC(HelloWorld);
 
-	float backgroud_x;
+	//float backgroud_x;
 
 	int count;
 
@@ -51,12 +62,16 @@ public:
 
 	~HelloWorld();
 
+	float backgroud_x;
+	int currentLevel = 0;
+
 	void MoveMap(float f);
 	void detectGround(float bx);
+	TMXTiledMap* CreateTmap(int mapNumber);
 
 	void tick(float dt);
 	bool createBox2dWorld(bool debug);
-	void clearSpriteBody();
+	void clearSpriteBody(float dt);
 
 	b2Body* addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* sprite, int tag, uint16 categoryBits, uint16 maskBits);
 
@@ -71,10 +86,13 @@ public:
 	void AfterAction(float dt);
 	void EnemyDeath(float dt);
 	void ShootFire(float dt);
+	void DestoryTileMap(float dt);
+
 	//void FireDeath(float dt);
 	void SpawnEnemy();
 	void onDraw(const cocos2d::Mat4& transform, uint32_t flags);
 	void BeginContact(b2Contact* contact);
+	void SpawnPosition(TMXTiledMap* newTileMap);
 
 	////////////////////////////////////////
 	GLESDebugDraw* m_debugDraw;
@@ -113,6 +131,17 @@ public:
 	//Array* dragons;
 	//Array* birds;
 
+	TMXTiledMap* tmap;
+	TMXTiledMap* tmap2;
+	TMXLayer* background;
+	TMXLayer* metainfo;
+	TMXLayer* test;
+
+	//TMXObjectGroup* playerSpawnPoint;
+	//TMXObjectGroup* dragonSpawnPoint;
+	//TMXObjectGroup* birdSpawnPoint;
+	//TMXObjectGroup* dkSpanwPoint;
+
 	vector<Sprite*> dragonPostions;
 	vector<Sprite*> birdPositions;
 
@@ -131,16 +160,6 @@ public:
 	Sprite* transformButton;
 
 	Color3B transButtonColor;
-
-	cocos2d::TMXTiledMap* tmap;
-	cocos2d::TMXLayer* background;
-	cocos2d::TMXLayer* metainfo;
-	cocos2d::TMXLayer* test;
-
-	TMXObjectGroup* playerSpawnPoint;
-	TMXObjectGroup* dragonSpawnPoint;
-	TMXObjectGroup* birdSpawnPoint;
-	TMXObjectGroup* dkSpanwPoint;
 
 	vector<Vec2> positionDummies;
 	Vec2 positionDummy;
