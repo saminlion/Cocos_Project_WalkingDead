@@ -17,7 +17,7 @@ Character::Character()
 
 void Character::ClearOnce()
 {
-	_spawnPositions.clear();
+	//_spawnPositions.clear();
 	_dragonPositions.clear();
 	_birdPositions.clear();
 	_dkPositions.clear();
@@ -25,6 +25,9 @@ void Character::ClearOnce()
 	dragonSPs.clear();
 	birdSPs.clear();
 	dkSPs.clear();
+	dragonPositions.clear();
+	birdPositions.clear();
+	dkPositions.clear();
 }
 
 /**
@@ -101,8 +104,7 @@ void Character::switchingAction(Sprite* actionSprite, Action* newAction, bool re
 
 vector<Sprite*> Character::setDragonPosition()
 {
-	log("Dragon Spawn Point Size : %d", _dragonPositions.size());
-
+	log("_DragonPostion Size : %d", _dragonPositions.size());
 	for (int i = 0; i < _dragonPositions.size(); i++)
 	{
 		auto vec2 = (Vec2)_dragonPositions.at(i);
@@ -114,6 +116,7 @@ vector<Sprite*> Character::setDragonPosition()
 		initPositionSprite->setTag(i);
 
 		dragonPositions.push_back(initPositionSprite);
+		log("DragonPostion Size : %d", dragonPositions.size());
 	}
 
 	return dragonPositions;
@@ -134,13 +137,12 @@ void Character::getDragonSpawnPointPositions(TMXObjectGroup* objects)
 
 		_spawnPositions.push_back(initPosition);
 		_dragonPositions.push_back(initPosition);
+
 	}
 }
 
 vector<Sprite*> Character::setBirdPosition()
 {
-	log("Bird Spawn Point Size : %d", _birdPositions.size());
-
 	for (int i = 0; i < _birdPositions.size(); i++)
 	{
 		auto vec2 = (Vec2)_birdPositions.at(i);

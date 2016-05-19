@@ -38,13 +38,15 @@ bool HelloWorld::init()
 	tmap = CreateTmap(StageNumber::Stage1);
 	tmap->setAnchorPoint(Vec2::ZERO);
 	this->addChild(tmap, -1, 11);
-	this->SpawnPosition(tmap);
+	tmaps.push_back(tmap);
 
 	tmap2 = CreateTmap(currentLevel + 1);
 	tmap2->setPosition(tmap->getContentSize().width, 0);
 	tmap2->setAnchorPoint(Vec2::ZERO);
 	this->addChild(tmap2, -1, 11);
-	this->SpawnPosition(tmap2);
+	tmaps.push_back(tmap2);
+	
+	SetTmap(tmaps, true);
 
 	attackButton = Sprite::create("images/UI/AttackButton.png");
 	attackButton->setPosition(440, 20);
@@ -86,10 +88,6 @@ bool HelloWorld::init()
 		
 #pragma region Init Enemy Character
 
-
-
-
-
 #pragma endregion
 
 	if (this->createBox2dWorld(true))
@@ -103,31 +101,211 @@ bool HelloWorld::init()
 	return true;
 }
 
-void HelloWorld::SpawnPosition(TMXTiledMap* newTileMap)
+TMXTiledMap* HelloWorld::CreateTmap(int mapNumber)
 {
-	log("Positions Size : %d", positions.size());
+	log("Create Tmap");
+	currentLevel = mapNumber;
 
-	for (int i = 0; i < positions.size(); i++)
+	char str[100];
+
+	sprintf(str, "tile/Platform%d.tmx", mapNumber);
+
+	auto newTileMap = TMXTiledMap::create(str);
+
+	background = newTileMap->getLayer("Background");
+
+	if (mapNumber == 1)
 	{
-		position = (Sprite*)(positions.at(i));
+		auto playerSpawnPoint = newTileMap->getObjectGroup("Objects");
 
-		newTileMap->addChild(position);
+		ValueMap spawnPoint = playerSpawnPoint->getObject("SpawnPoint");
 
-		positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
+		int x = spawnPoint["x"].asInt();
+		int y = spawnPoint["y"].asInt();
 
-		positionDummies.push_back(positionDummy);
+		player->playerSprite = Sprite::create("images/HI/HI_Walk_1.png");
+
+		player->playerSprite->setPosition(Vec2(x, y));
+		player->playerSprite->setAnchorPoint(Vec2::ZERO);
+		player->playerSprite->setScale(1.5f);
+		this->addChild(player->playerSprite, 2);
+
+		player->playerAction(player->UWALK);
 	}
 
-	dragonPostions = character->setDragonPosition();
-	birdPositions = character->setBirdPosition();
+	auto dragonSpawnPoint = newTileMap->getObjectGroup("DragonSpawnPoints");
 
-	log("Dragons Postion Size : %d", dragonPostions.size());
-	log("Birds Postion Size : %d", birdPositions.size());
+	auto birdSpawnPoint = newTileMap->getObjectGroup("BirdSpawnPoints");
+
+	//auto dkSpanwPoint = tileMap->getObjectGroup("DKSpawnPoints");
+
+	character->ClearOnce();
+
+	character->getDragonSpawnPointPositions(dragonSpawnPoint);
+
+	character->getBirdSpawnPointPositions(birdSpawnPoint);
+
+	positions = character->setEnemyPosition();
+
+	return newTileMap;
+}
+
+void HelloWorld::SetTmap(vector<TMXTiledMap*> newTileMaps, bool firstTime)
+{
+	log("TileMap Size : %d", newTileMaps.size());
+
+	for (int i = 0; i < newTileMaps.size(); i++)
+	{
+		auto newTileMap = newTileMaps.at(i);
+
+		log("SpawnPoint");
+		
+		//positions = character->setEnemyPosition();
+
+		dragonPostions = character->setDragonPosition();
+		birdPositions = character->setBirdPosition();
+
+		log("Dragons Postion Size : %d", dragonPostions.size());
+		log("Birds Postion Size : %d", birdPositions.size());
+		log("Positions Size : %d", positions.size());
+
+		if (i == 0 && firstTime)
+		{
+			for (int j = 0; j < dragonPostions.size() + birdPositions.size(); j++)
+			{
+				position = (Sprite*)(positions.at(j));
+
+				log("%d", j);
+
+				newTileMap->addChild(position);
+
+				positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
+
+				positionDummies.push_back(positionDummy);
+
+				//log("Position Dummies Size : %d", positionDummies.size());
+			}
+		}
+
+		else if (i == 1 || !firstTime)
+		{
+			for (int j = 4; j < dragonPostions.size() + birdPositions.size(); j++)
+			{
+				position = (Sprite*)(positions.at(j));
+
+				log("%d", j);
+
+				newTileMap->addChild(position);
+
+				positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
+
+				positionDummies.push_back(positionDummy);
+
+				//log("Position Dummies Size : %d", positionDummies.size());
+			}
+		}
+	}
+}
+
+void HelloWorld::DestoryTileMap(float dt)
+{
+	for (b2Body* b = _world->GetBodyList(); b; b = b->GetNext())
+	{
+		if (b->GetUserData() != nullptr)
+		{
+			auto spriteData = (Sprite*)b->GetUserData();
+
+			if (spriteData->getName() == "Dragon" || spriteData->getName() == "Bird" || spriteData->getName() == "DK")
+			{
+				this->removeChild(spriteData, true);
+
+				_world->DestroyBody(b);
+
+				if (!enemyDatas.empty() && !enemyBodies.empty() && !positions.empty() && !positionDummies.empty())
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						//0, 1, 2, 3
+						//4, 5, 6, 7
+						enemyDatas.swap(i, i + 4);
+						swap(enemyBodies.begin() + i, enemyBodies.end() + i);
+						swap(positions.begin() + i, positions.end() + i);
+						swap(positionDummies.begin() + i, positionDummies.end() + i);
+
+						enemyDatas.erase(enemyDatas.end() + i);
+						enemyBodies.erase(enemyBodies.end() + i);
+						positions.erase(positions.end() + i);
+						positionDummies.erase(positionDummies.end() + i);
+						character->_spawnPositions.erase(character->_spawnPositions.begin() + i);
+						//log("Enemy Datas Size : %d", enemyDatas.size());
+						//log("Enemy Bodies Size : %d", enemyBodies.size());
+						//log("Positions Size : %d", positions.size());
+						//log("Position Dummies Size : %d", positionDummies.size());
+					}
+				}
+
+				//log("Dragons Postion Size : %d", dragonPostions.size());
+				//log("Birds Postion Size : %d", birdPositions.size());
+				//log("Positions Size : %d", positions.size());
+				//log("Position Dummies Size : %d", positionDummies.size());
+				//log("tmaps Size : %d", tmaps.size());
+
+				break;
+			}
+		}
+	}
+}
+
+void HelloWorld::MoveMap(float f)
+{
+	//log("Tmap X position : %f", tmap->getPositionX());
+	//log("Background_x : %f", backgroud_x);
+
+	backgroud_x -= 2;
+
+	//log("%f", -480 + tmap->getContentSize().width);
+	//log("tmap X Position : %f", tmap->getPositionX());
+
+	if (tmap->getPositionX() == -(-480 + tmap->getContentSize().width))
+	{
+		log("Switch and Change tmap");
+
+		log("Check1");
+
+		removeChild(tmap, true);
+		log("Check2");
+		log("tmaps Size : %d", tmaps.size());
+
+		swap(tmaps.begin(), tmaps.end());
+
+		tmaps.erase(tmaps.begin());
+
+		this->DestoryTileMap(0.5f);
+
+		//log("Dragons Postion Size : %d", dragonPostions.size());
+		//log("Birds Postion Size : %d", birdPositions.size());
+		//log("Positions Size : %d", positions.size());
+		//log("Position Dummies Size : %d", positionDummies.size());
+		//log("tmaps Size : %d", tmaps.size());
+		
+		tmap = tmap2;
+
+		auto tmap3 = CreateTmap(currentLevel + 1);
+		tmap3->setPosition(tmap->getContentSize().width, 0);
+		tmap3->setAnchorPoint(Vec2::ZERO);
+		this->addChild(tmap3, -1, 11);
+		tmaps.push_back(tmap3);
+
+		SetTmap(tmaps, false);
+	}
+
+	tmap2->setPosition(Vec2(backgroud_x + tmap->getContentSize().width, 0));
+	tmap->setPosition(Vec2(backgroud_x, 0));
+	detectGround(backgroud_x);
 }
 
 void HelloWorld::SpawnEnemy()
 {
-
 	//vector<Sprite*> dkPositions = character->setDKPosition();
 
 	dragons = enemy->CreateDragon(dragonPostions);
@@ -135,6 +313,7 @@ void HelloWorld::SpawnEnemy()
 
 #pragma region Dragon
 
+	log("Position Dummies Size : %d", positionDummies.size());
 	log("Dragons Size : %d", dragons.size());
 	log("Birds Size : %d", birds.size());
 
@@ -213,10 +392,11 @@ void HelloWorld::EnemyDeath(float dt)
 				{
 					enemyBodies.erase(enemyBodies.begin() + i);
 					positions.erase(positions.begin() + i);//positions.at(i) = hitSprite;
+					positionDummies.erase(positionDummies.begin() + i);
 				}
 			}
 
-			this->scheduleOnce(schedule_selector(HelloWorld::clearSpriteBody), 1.0f);
+			this->scheduleOnce(schedule_selector(HelloWorld::clearSpriteBody), 0.01f);
 		}
 	}
 }
@@ -258,11 +438,12 @@ void HelloWorld::clearSpriteBody(float dt)
 
 				if (spriteData == hitSprite && b == hitBody && _world->IsLocked() == false)
 				{
-					log("Clear Sprite");
+					//log("Clear Sprite");
 					this->removeChild(hitSprite, true);
 					_world->DestroyBody(hitBody);
 
 					//this->schedule(schedule_selector(HelloWorld::EnemyDeath), 1.0f);
+					log("Clear Done");
 
 					break;
 				}
@@ -573,7 +754,7 @@ void HelloWorld::BeginContact(b2Contact* contact)
 	log("Impact Name : %s", impact->getName().c_str());
 	log("Impacted Name : %s", impacted->getName().c_str());
 
-	if (impact->getTag() == 10 && impacted->getName() == "Dragon" || impact->getTag() == 10 && impacted->getName() == "Bird" || impact->getTag() == 10 && impacted->getName() == "DK")
+	if (impacted->getName() == "Dragon" || impacted->getName() == "Bird" || impacted->getName() == "DK" || impact->getName() == "Dragon" || impact->getName() == "Bird" || impact->getName() == "DK")
 	{
 		log("Enemy Vs Player");
 
@@ -583,12 +764,11 @@ void HelloWorld::BeginContact(b2Contact* contact)
 			{
 				hitSprite = (Sprite*)bodyA->GetUserData();
 
-				//hitSprite->setVisible(false);
 				log("HitSprite Name : %s", hitSprite->getName().c_str());
 
-				log("Vector Index Number : %d", i);
-
 				hitIndex = i;
+
+				log("Vector Index Number : %d", i);
 
 				hitBody = enemyBodies.at(i);
 
@@ -596,25 +776,15 @@ void HelloWorld::BeginContact(b2Contact* contact)
 
 				killSuccess = true;
 			}
-		}
-	}
-
-	else if (impacted->getTag() == 10 && impact->getName() == "Dragon" || impacted->getTag() == 10 && impact->getName() == "Bird" || impacted->getTag() == 10 && impact->getName() == "DK")
-	{
-		log("Enemy Vs Player");
-
-		for (int i = 0; i < enemyBodies.size(); i++)
-		{
-			if (bodyA == enemyBodies.at(i))
+			else if (bodyB == enemyBodies.at(i))
 			{
-				hitSprite = (Sprite*)bodyA->GetUserData();
+				hitSprite = (Sprite*)bodyB->GetUserData();
 
-				//hitSprite->setVisible(false);
 				log("HitSprite Name : %s", hitSprite->getName().c_str());
 
-				log("Vector Index Number : %d", i);
-
 				hitIndex = i;
+
+				log("Vector Index Number : %d", i);
 
 				hitBody = enemyBodies.at(i);
 
@@ -624,6 +794,34 @@ void HelloWorld::BeginContact(b2Contact* contact)
 			}
 		}
 	}
+	
+	//else if (impacted->getTag() == 10 && impact->getName() == "Dragon" || impacted->getTag() == 10 && impact->getName() == "Bird" || impacted->getTag() == 10 && impact->getName() == "DK")
+	
+	//else if (impact->getName() == "Dragon" ||impact->getName() == "Bird" || impact->getName() == "DK")
+	//{
+	//	log("Enemy Vs Player");
+
+	//	for (int i = 0; i < enemyBodies.size(); i++)
+	//	{
+	//		if (bodyA == enemyBodies.at(i))
+	//		{
+	//			hitSprite = (Sprite*)bodyA->GetUserData();
+
+	//			//hitSprite->setVisible(false);
+	//			log("HitSprite Name : %s", hitSprite->getName().c_str());
+
+	//			log("Vector Index Number : %d", i);
+
+	//			hitIndex = i;
+
+	//			hitBody = enemyBodies.at(i);
+
+	//			hitBody->ApplyForce(b2Vec2(1000, 800), hitBody->GetWorldCenter(), true);
+
+	//			killSuccess = true;
+	//		}
+	//	}
+	//}
 
 	if (impact->getTag() == 10 && impacted->getTag() == 21)
 	{
@@ -664,23 +862,28 @@ void HelloWorld::tick(float dt)
 		}
 	}
 
-	log("EnemyDatas Size : %d", enemyDatas.size());
-	log("EnemyBoides Size : %d", enemyBodies.size());
-	log("Position Size : %d", positions.size());
-	log("Position Dummies : %d", positionDummies.size());
+	//log("EnemyDatas Size : %d", enemyDatas.size());
+	//log("EnemyBoides Size : %d", enemyBodies.size());
+	//log("Position Size : %d", positions.size());
+	//log("Position Dummies : %d", positionDummies.size());
 
 	if (enemyDatas.size() != 0)
 	{
 		for (int i = 0; i < enemyDatas.size(); i++)
 		{
-			position = (Sprite*)positions.at(i);
-
 			auto eSp = (Sprite*)enemyDatas.at(i);
 
-			if (!killSuccess)
+			positionDummy = positionDummies.at(i);
+
+			position = (Sprite*)positions.at(i);
+
+			for (int i = 0; i < positions.size(); i++)
 			{
 				positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
-
+			}
+			
+			if (!killSuccess)
+			{
 				enemyBody = (b2Body*)enemyBodies.at(i);
 
 				enemyBodyPos = b2Vec2(enemyBody->GetWorldCenter());
@@ -712,7 +915,7 @@ void HelloWorld::tick(float dt)
 				{
 					eSp->setPosition(Vec2(hitBody->GetPosition().x * PTM_RATIO, hitBody->GetPosition().y * PTM_RATIO));
 
-					deathScale -= 0.006f;
+					deathScale -= 0.06f;
 
 					if (deathScale < 0.0f)
 					{
@@ -794,116 +997,6 @@ void HelloWorld::tick(float dt)
 	{
 
 	}
-}
-
-TMXTiledMap* HelloWorld::CreateTmap(int mapNumber)
-{
-	log("Create Tmap");
-	currentLevel = mapNumber;
-
-	char str[100];
-
-	sprintf(str, "tile/Platform%d.tmx", mapNumber);
-
-	auto tileMap = TMXTiledMap::create(str);
-
-	background = tileMap->getLayer("Background");
-
-	if (mapNumber == 1)
-	{
-		auto playerSpawnPoint = tileMap->getObjectGroup("Objects");
-
-		ValueMap spawnPoint = playerSpawnPoint->getObject("SpawnPoint");
-
-		int x = spawnPoint["x"].asInt();
-		int y = spawnPoint["y"].asInt();
-
-		player->playerSprite = Sprite::create("images/HI/HI_Walk_1.png");
-
-		player->playerSprite->setPosition(Vec2(x, y));
-		player->playerSprite->setAnchorPoint(Vec2::ZERO);
-		player->playerSprite->setScale(1.5f);
-		this->addChild(player->playerSprite, 2);
-
-		player->playerAction(player->UWALK);
-	}
-	
-	auto dragonSpawnPoint = tileMap->getObjectGroup("DragonSpawnPoints");
-
-	auto birdSpawnPoint = tileMap->getObjectGroup("BirdSpawnPoints");
-
-	//auto dkSpanwPoint = tileMap->getObjectGroup("DKSpawnPoints");
-
-	log("SpawnPoint");
-
-	character->ClearOnce();
-
-	character->getDragonSpawnPointPositions(dragonSpawnPoint);
-
-	character->getBirdSpawnPointPositions(birdSpawnPoint);
-
-	positions = character->setEnemyPosition();
-	
-	log("positions Size create Map : %d", positions.size());
-
-	return tileMap;
-}
-
-void HelloWorld::DestoryTileMap(float dt)
-{
-	for (b2Body* b = _world->GetBodyList(); b; b = b->GetNext())
-	{
-		if (b->GetUserData() != nullptr)
-		{
-			auto spriteData = (Sprite*)b->GetUserData();
-
-			if (spriteData->getName() == "Dragon" || spriteData->getName() == "Bird" || spriteData->getName() == "DK")
-			{
-				this->removeChild(spriteData, true);
-
-				_world->DestroyBody(b);
-
-				enemyDatas.clear();
-				enemyBodies.clear();
-				positions.clear();
-				positionDummies.clear();
-
-				break;
-			}
-		}
-	}
-}
-
-void HelloWorld::MoveMap(float f)
-{
-	//log("Tmap X position : %f", tmap->getPositionX());
-	//log("Background_x : %f", backgroud_x);
-	
-	backgroud_x -= 2;
-
-	log("%f", -480 + tmap->getContentSize().width);
-
-	if (tmap->getPositionX() == -480 + tmap->getContentSize().width)
-	{
-		removeChild(tmap, true);
-		this->scheduleOnce(schedule_selector(HelloWorld::DestoryTileMap), 0.5f);
-
-		tmap2 = tmap;
-
-		tmap2 = CreateTmap(currentLevel + 1);
-
-		addChild(tmap2, -1, 11);
-
-		//this->createBox2dWorld(true);
-		
-		//backgroud_x = 0;
-		//tmap->setPosition(Vec2(backgroud_x, 0));
-	}
-
-	tmap2->setPosition(Vec2(backgroud_x + tmap->getContentSize().width, 0));
-	//log("Tmap2 X position : %f", tmap2->getPositionX());
-	tmap->setPosition(Vec2(backgroud_x, 0));
-	detectGround(backgroud_x);
 }
 
 void HelloWorld::detectGround(float bx)

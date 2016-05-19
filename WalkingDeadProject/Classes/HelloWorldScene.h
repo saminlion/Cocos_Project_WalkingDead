@@ -68,6 +68,7 @@ public:
 	void MoveMap(float f);
 	void detectGround(float bx);
 	TMXTiledMap* CreateTmap(int mapNumber);
+	void SetTmap(vector<TMXTiledMap*> newTileMaps, bool firstTime);
 
 	void tick(float dt);
 	bool createBox2dWorld(bool debug);
@@ -92,7 +93,6 @@ public:
 	void SpawnEnemy();
 	void onDraw(const cocos2d::Mat4& transform, uint32_t flags);
 	void BeginContact(b2Contact* contact);
-	void SpawnPosition(TMXTiledMap* newTileMap);
 
 	////////////////////////////////////////
 	GLESDebugDraw* m_debugDraw;
@@ -124,6 +124,7 @@ public:
 	b2Body* hitBody;
 	Sprite* hitSprite;
 
+	vector<Sprite*> positionsCharacter;
 	vector<Sprite*> positions;
 	vector<Sprite*> fires;
 	vector<Sprite*> dragons;
@@ -131,6 +132,7 @@ public:
 	//Array* dragons;
 	//Array* birds;
 
+	vector<TMXTiledMap*> tmaps;
 	TMXTiledMap* tmap;
 	TMXTiledMap* tmap2;
 	TMXLayer* background;

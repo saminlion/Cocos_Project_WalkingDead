@@ -14,12 +14,12 @@ private:
 	ValueVector dkSPs;
 
 	Sprite* initPositionSprite;
-	vector<Vec2> _spawnPositions;
 	vector<Vec2> _dragonPositions;
 	vector<Vec2> _birdPositions;
 	vector<Vec2> _dkPositions;
 
 public:
+	vector<Vec2> _spawnPositions;
 	Character();
 	void switchingAction(Sprite* actionSprite, Action* newAction, bool repeat);
 	Animation* createAnimationSpriteSheet(Texture2D* texture, int numberOflineSprite, int numberOfSprites, float delay, float width, float height);
