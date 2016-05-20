@@ -7,12 +7,14 @@
 #include "Player.h"
 #include "Character.h"
 #include "Enemy.h"
+#include <iostream>
 
 #define PTM_RATIO 32
 #define COCOS2D_DEBUG 2
 #define MAX_TRANSCOUNT 50.f
 
 using namespace cocos2d;
+using namespace std;
 
 enum _entityCategory {
 	FIRE = 0x0001,
@@ -23,12 +25,7 @@ enum _entityCategory {
 enum StageNumber
 {
 	Stage0 = 0,
-	Stage1 = 1,
-	Stage2,
-	Stage3,
-	Stage4,
-	Stage5,
-	Stage6
+	Stage1 = 1
 };
 
 struct BodyUserData {
@@ -68,7 +65,8 @@ public:
 	void MoveMap(float f);
 	void detectGround(float bx);
 	TMXTiledMap* CreateTmap(int mapNumber);
-	void SetTmap(vector<TMXTiledMap*> newTileMaps, bool firstTime);
+	void SetTmap(int tileMapNumber, bool firstTime);
+	void CreatePlayerEffectBody();
 
 	void tick(float dt);
 	bool createBox2dWorld(bool debug);
@@ -87,13 +85,14 @@ public:
 	void AfterAction(float dt);
 	void EnemyDeath(float dt);
 	void ShootFire(float dt);
-	void DestoryTileMap(float dt);
+	void DestoryTileMap();
 
 	//void FireDeath(float dt);
 	void SpawnEnemy();
 	void onDraw(const cocos2d::Mat4& transform, uint32_t flags);
 	void BeginContact(b2Contact* contact);
-
+	//void swap
+	//std::swa
 	////////////////////////////////////////
 	GLESDebugDraw* m_debugDraw;
 	Size winSize;

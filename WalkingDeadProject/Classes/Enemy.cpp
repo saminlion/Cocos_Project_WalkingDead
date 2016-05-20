@@ -20,10 +20,6 @@ Enemy::Enemy()
 
 std::vector<Sprite*> Enemy::CreateDragon(std::vector<Sprite*> positions)
 {
-	log("Dragon Initialize");
-
-	log("%d", positions.size());
-
 	for (int i = 0; i < positions.size(); i++) //for (int i = 0; i < 10; i++)
 	{
 		dragonSprite = (Sprite*)(positions.at(i));
@@ -41,10 +37,7 @@ std::vector<Sprite*> Enemy::CreateDragon(std::vector<Sprite*> positions)
 		Character::switchingAction(dragonSprite, dragonAnimate, true);
 
 		dragonSprites.push_back(dragonSprite);
-
-		log("DragonSprite Check Tag : %d", dragonSprite->getTag());
 	}
-
 	return dragonSprites;
 }
 

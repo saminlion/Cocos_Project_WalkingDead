@@ -17,17 +17,20 @@ Character::Character()
 
 void Character::ClearOnce()
 {
-	//_spawnPositions.clear();
-	_dragonPositions.clear();
-	_birdPositions.clear();
-	_dkPositions.clear();
-	enemyPositions.clear();
-	dragonSPs.clear();
-	birdSPs.clear();
-	dkSPs.clear();
 	dragonPositions.clear();
 	birdPositions.clear();
 	dkPositions.clear();
+	setDKPosition().clear();
+	setBirdPosition().clear();
+	setDragonPosition().clear();
+	setEnemyPosition().clear();
+	_spawnPositions.clear();
+	_dragonPositions.clear();
+	_birdPositions.clear();
+	_dkPositions.clear();
+	dragonSPs.clear();
+	birdSPs.clear();
+	dkSPs.clear();
 }
 
 /**
@@ -104,7 +107,8 @@ void Character::switchingAction(Sprite* actionSprite, Action* newAction, bool re
 
 vector<Sprite*> Character::setDragonPosition()
 {
-	log("_DragonPostion Size : %d", _dragonPositions.size());
+	log("Inside Character _Dragons Postion Size : %d", _dragonPositions.size());
+	
 	for (int i = 0; i < _dragonPositions.size(); i++)
 	{
 		auto vec2 = (Vec2)_dragonPositions.at(i);
@@ -116,7 +120,6 @@ vector<Sprite*> Character::setDragonPosition()
 		initPositionSprite->setTag(i);
 
 		dragonPositions.push_back(initPositionSprite);
-		log("DragonPostion Size : %d", dragonPositions.size());
 	}
 
 	return dragonPositions;
@@ -143,6 +146,8 @@ void Character::getDragonSpawnPointPositions(TMXObjectGroup* objects)
 
 vector<Sprite*> Character::setBirdPosition()
 {
+	log("Inside Character _Birds Postion Size : %d", _birdPositions.size());
+	
 	for (int i = 0; i < _birdPositions.size(); i++)
 	{
 		auto vec2 = (Vec2)_birdPositions.at(i);

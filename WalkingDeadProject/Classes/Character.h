@@ -12,13 +12,12 @@ private:
 	ValueVector dragonSPs;
 	ValueVector birdSPs;
 	ValueVector dkSPs;
-
 	Sprite* initPositionSprite;
-	vector<Vec2> _dragonPositions;
-	vector<Vec2> _birdPositions;
-	vector<Vec2> _dkPositions;
 
 public:
+	vector<Vec2> _dragonPositions;
+	vector<Vec2> _birdPositions;
+	vector<Vec2> _dkPositions; 
 	vector<Vec2> _spawnPositions;
 	Character();
 	void switchingAction(Sprite* actionSprite, Action* newAction, bool repeat);
