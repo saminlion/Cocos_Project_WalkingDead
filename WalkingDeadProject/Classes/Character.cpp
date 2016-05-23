@@ -6,30 +6,30 @@ Character::Character()
 {
 	log("Start Character Class");
 	_spawnPositions.clear();
-	_dragonPositions.clear();
-	_birdPositions.clear();
+	_wormPositions.clear();
+	_crapPositions.clear();
 	_dkPositions.clear();
-	enemyPositions.clear();
-	dragonSPs.clear();
-	birdSPs.clear();
+//	enemyPositions.clear();
+	wormsPs.clear();
+	crapsPs.clear();
 	dkSPs.clear();
 }
 
 void Character::ClearOnce()
 {
-	dragonPositions.clear();
-	birdPositions.clear();
+	wormPositions.clear();
+	crapPositions.clear();
 	dkPositions.clear();
 	setDKPosition().clear();
-	setBirdPosition().clear();
-	setDragonPosition().clear();
-	setEnemyPosition().clear();
+	setCrapPosition().clear();
+	setWormPosition().clear();
+	//setEnemyPosition().clear();
 	_spawnPositions.clear();
-	_dragonPositions.clear();
-	_birdPositions.clear();
+	_wormPositions.clear();
+	_crapPositions.clear();
 	_dkPositions.clear();
-	dragonSPs.clear();
-	birdSPs.clear();
+	wormsPs.clear();
+	crapsPs.clear();
 	dkSPs.clear();
 }
 
@@ -105,31 +105,11 @@ void Character::switchingAction(Sprite* actionSprite, Action* newAction, bool re
 	}
 }
 
-vector<Sprite*> Character::setDragonPosition()
+void Character::getwormspawnPointPositions(TMXObjectGroup* objects)
 {
-	log("Inside Character _Dragons Postion Size : %d", _dragonPositions.size());
-	
-	for (int i = 0; i < _dragonPositions.size(); i++)
-	{
-		auto vec2 = (Vec2)_dragonPositions.at(i);
+	wormsPs = objects->getObjects();
 
-		initPositionSprite = Sprite::create("images/Dummy.png");
-
-		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
-
-		initPositionSprite->setTag(i);
-
-		dragonPositions.push_back(initPositionSprite);
-	}
-
-	return dragonPositions;
-}
-
-void Character::getDragonSpawnPointPositions(TMXObjectGroup* objects)
-{
-	dragonSPs = objects->getObjects();
-
-	for (auto enemySP : dragonSPs)
+	for (auto enemySP : wormsPs)
 	{
 		auto VMobj = enemySP.asValueMap();
 
@@ -138,19 +118,17 @@ void Character::getDragonSpawnPointPositions(TMXObjectGroup* objects)
 
 		Vec2 initPosition = Vec2(vx, vy);
 
-		_spawnPositions.push_back(initPosition);
-		_dragonPositions.push_back(initPosition);
+		//_spawnPositions.push_back(initPosition);
+		_wormPositions.push_back(initPosition);
 
 	}
 }
 
-vector<Sprite*> Character::setBirdPosition()
+vector<Sprite*> Character::setWormPosition()
 {
-	log("Inside Character _Birds Postion Size : %d", _birdPositions.size());
-	
-	for (int i = 0; i < _birdPositions.size(); i++)
+	for (int i = 0; i < _wormPositions.size(); i++)
 	{
-		auto vec2 = (Vec2)_birdPositions.at(i);
+		auto vec2 = (Vec2)_wormPositions.at(i);
 
 		initPositionSprite = Sprite::create("images/Dummy.png");
 
@@ -158,17 +136,20 @@ vector<Sprite*> Character::setBirdPosition()
 
 		initPositionSprite->setTag(i);
 
-		birdPositions.push_back(initPositionSprite);
+		wormPositions.push_back(initPositionSprite);
 	}
 
-	return birdPositions;
+	_wormPositions.clear();
+
+	return wormPositions;
 }
 
-void Character::getBirdSpawnPointPositions(TMXObjectGroup* objects)
-{
-	birdSPs = objects->getObjects();
 
-	for (auto enemySP : birdSPs)
+void Character::getcrapspawnPointPositions(TMXObjectGroup* objects)
+{
+	crapsPs = objects->getObjects();
+
+	for (auto enemySP : crapsPs)
 	{
 		auto VMobj = enemySP.asValueMap();
 
@@ -177,10 +158,32 @@ void Character::getBirdSpawnPointPositions(TMXObjectGroup* objects)
 
 		Vec2 initPosition = Vec2(vx, vy);
 
-		_birdPositions.push_back(initPosition);
-		_spawnPositions.push_back(initPosition);
+		_crapPositions.push_back(initPosition);
+		//_spawnPositions.push_back(initPosition);
 	}
 }
+
+vector<Sprite*> Character::setCrapPosition()
+{
+	for (int i = 0; i < _crapPositions.size(); i++)
+	{
+		auto vec2 = (Vec2)_crapPositions.at(i);
+
+		initPositionSprite = Sprite::create("images/Dummy.png");
+
+		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
+
+		initPositionSprite->setTag(i);
+
+		crapPositions.push_back(initPositionSprite);
+	}
+
+	_crapPositions.clear();
+
+	return crapPositions;
+}
+
+
 
 vector<Sprite*> Character::setDKPosition()
 {
@@ -217,22 +220,22 @@ void Character::getDKSpawnPointPositions(TMXObjectGroup* objects)
 	}
 }
 
-vector<Sprite*> Character::setEnemyPosition()
-{
-	log("SpawnPoints Size : %d", _spawnPositions.size());
-
-	for (int i = 0; i < _spawnPositions.size(); i++)
-	{
-		auto vec2 = (Vec2)_spawnPositions.at(i);
-
-		initPositionSprite = Sprite::create("images/Dummy.png");
-
-		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
-
-		initPositionSprite->setTag(i);
-
-		enemyPositions.push_back(initPositionSprite);
-	}
-
-	return enemyPositions;
-}
+//vector<Sprite*> Character::setEnemyPosition()
+//{
+//	log("SpawnPoints Size : %d", _spawnPositions.size());
+//
+//	for (int i = 0; i < _spawnPositions.size(); i++)
+//	{
+//		auto vec2 = (Vec2)_spawnPositions.at(i);
+//
+//		initPositionSprite = Sprite::create("images/Dummy.png");
+//
+//		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
+//
+//		initPositionSprite->setTag(i);
+//
+//		enemyPositions.push_back(initPositionSprite);
+//	}
+//
+//	return enemyPositions;
+//}

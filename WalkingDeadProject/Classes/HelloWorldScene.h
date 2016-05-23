@@ -126,10 +126,10 @@ public:
 	vector<Sprite*> positionsCharacter;
 	vector<Sprite*> positions;
 	vector<Sprite*> fires;
-	vector<Sprite*> dragons;
-	vector<Sprite*> birds;
-	//Array* dragons;
-	//Array* birds;
+	vector<Sprite*> worms;
+	vector<Sprite*> craps;
+	//Array* worms;
+	//Array* craps;
 
 	vector<TMXTiledMap*> tmaps;
 	TMXTiledMap* tmap;
@@ -139,17 +139,17 @@ public:
 	TMXLayer* test;
 
 	//TMXObjectGroup* playerSpawnPoint;
-	//TMXObjectGroup* dragonSpawnPoint;
-	//TMXObjectGroup* birdSpawnPoint;
+	//TMXObjectGroup* wormspawnPoint;
+	//TMXObjectGroup* crapspawnPoint;
 	//TMXObjectGroup* dkSpanwPoint;
 
-	vector<Sprite*> dragonPostions;
-	vector<Sprite*> birdPositions;
+	vector<Sprite*> wormPositions;
+	vector<Sprite*> crapPositions;
 
 	Sprite* dyingEnemy;
 	Sprite* fireSprite;
-	Sprite* dragon;
-	Sprite* bird;
+	Sprite* worm;
+	Sprite* crap;
 	Sprite* position;
 
 	Sprite* effectDummy1;

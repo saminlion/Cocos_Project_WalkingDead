@@ -9,14 +9,14 @@ using namespace std;
 class Character
 {
 private:
-	ValueVector dragonSPs;
-	ValueVector birdSPs;
+	ValueVector wormsPs;
+	ValueVector crapsPs;
 	ValueVector dkSPs;
 	Sprite* initPositionSprite;
 
 public:
-	vector<Vec2> _dragonPositions;
-	vector<Vec2> _birdPositions;
+	vector<Vec2> _wormPositions;
+	vector<Vec2> _crapPositions;
 	vector<Vec2> _dkPositions; 
 	vector<Vec2> _spawnPositions;
 	Character();
@@ -26,21 +26,21 @@ public:
 
 	void ClearOnce();
 
-	vector<Sprite*> setEnemyPosition();
+	//vector<Sprite*> setEnemyPosition();
 
-	vector<Sprite*> setDragonPosition();
-	void getDragonSpawnPointPositions(TMXObjectGroup* objects);
+	vector<Sprite*> setWormPosition();
+	void getwormspawnPointPositions(TMXObjectGroup* objects);
 
-	vector<Sprite*> setBirdPosition();
-	void getBirdSpawnPointPositions(TMXObjectGroup* objects);
+	vector<Sprite*> setCrapPosition();
+	void getcrapspawnPointPositions(TMXObjectGroup* objects);
 
 	vector<Sprite*> setDKPosition();
 	void getDKSpawnPointPositions(TMXObjectGroup* objects);
 
-	vector<Sprite*> dragonPositions;
-	vector<Sprite*> birdPositions;
+	vector<Sprite*> wormPositions;
+	vector<Sprite*> crapPositions;
 	vector<Sprite*> dkPositions;
-	vector<Sprite*> enemyPositions;
+	//vector<Sprite*> enemyPositions;
 
 	int enemyPositionSize;
 

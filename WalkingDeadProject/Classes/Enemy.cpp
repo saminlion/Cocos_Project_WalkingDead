@@ -3,66 +3,54 @@
 Enemy::Enemy()
 {
 	log("Enemy Initialize");
-
-	//for (int i = 0; i < Character::setEnemyPosition().size(); i++)
-	//{
-	//	auto enemySprite = Sprite::create("images/Enemy/Dragon_Anim_1.png");
-
-	//	enemySprite->setScale(1.f);
-
-	//	enemySprite->setTag(i);
-
-	//	log("EnemySprite Check Tag : %d", enemySprite->getTag());
-
-	//	enemySprites.push_back(enemySprite);
-	//}
 }
 
-std::vector<Sprite*> Enemy::CreateDragon(std::vector<Sprite*> positions)
+std::vector<Sprite*> Enemy::CreateFirstEnemy(std::vector<Sprite*> positions)
 {
 	for (int i = 0; i < positions.size(); i++) //for (int i = 0; i < 10; i++)
 	{
-		dragonSprite = (Sprite*)(positions.at(i));
+		firstEnemySprite = (Sprite*)(positions.at(i));
 
-		dragonSprite = Sprite::create("images/Enemy/Dragon_Anim_1.png");
+		firstEnemySprite = Sprite::create("images/Enemy/Worm_1.png");
 
-		dragonAnimation = Character::createAnimationMultiSprite("images/Enemy/Dragon_Anim_%d.png", 8, 0.2f);
+		firstEnemyAnimation = Character::createAnimationMultiSprite("images/Enemy/Worm_%d.png", 8, 0.2f);
 
-		dragonSprite->setTag(i);
+		firstEnemySprite->setTag(i);
 
-		dragonSprite->setName("Dragon");
+		firstEnemySprite->setName("Dragon");
 
-		dragonAnimate = Animate::create(dragonAnimation);
+		firstEnemyAnimate = Animate::create(firstEnemyAnimation);
 
-		Character::switchingAction(dragonSprite, dragonAnimate, true);
+		Character::switchingAction(firstEnemySprite, firstEnemyAnimate, true);
 
-		dragonSprites.push_back(dragonSprite);
+		firstEnemySprites.push_back(firstEnemySprite);
 	}
-	return dragonSprites;
+
+	return firstEnemySprites;
 }
 
-std::vector<Sprite*> Enemy::CreateBird(std::vector<Sprite*> positions)
+std::vector<Sprite*> Enemy::CreateSecondEnemy(std::vector<Sprite*> positions)
 {
 	for (int i = 0; i < positions.size(); i++) //for (int i = 0; i < 10; i++)
 	{
-		auto birdSprite = Sprite::create("images/Enemy/BirdEnemyIdleSprite.png");
+		auto secondEnemySprite = Sprite::create("images/Enemy/Crap_1.png");
 
-		//birdAnimation = Character::createAnimationMultiSprite("images/Enemy/Dragon_Anim_%d.png", 8, 0.2f);
+		secondEnemyAnimation = Character::createAnimationMultiSprite("images/Enemy/Crap_%d.png", 11, 0.2f);
 
-		birdSprite->setTag(i);
+		secondEnemySprite->setTag(i);
 
-		birdSprite->setName("Bird");
+		secondEnemySprite->setName("Bird");
 
-		birdSprite->setScale(1.f);
+		secondEnemySprite->setScale(1.f);
 
-		//birdAnimate = Animate::create(birdAnimation);
+		secondEnemyAnimate = Animate::create(secondEnemyAnimation);
 
-		//Character::switchingAction(birdSprite, birdAnimate, true);
+		Character::switchingAction(secondEnemySprite, secondEnemyAnimate, true);
 
-		birdSprites.push_back(birdSprite);
+		secondEnemySprites.push_back(secondEnemySprite);
 	}
 
-	return birdSprites;
+	return secondEnemySprites;
 }
 
 Vector<Sprite*> Enemy::CreateDK()

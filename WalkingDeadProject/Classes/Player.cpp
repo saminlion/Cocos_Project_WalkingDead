@@ -100,7 +100,7 @@ void Player::playerAction(int actionNumber)
 	switch (actionNumber)
 	{
 	case UWALK:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI/HI_Walk_%d.png", 8, 0.3f);
+		playerAnimation = Character::createAnimationMultiSprite("images/PlayerKnight/Walk (%d).png", 10, 0.3f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(UWALK);
 		Character::switchingAction(playerSprite, playerAnimate, true);
@@ -114,7 +114,7 @@ void Player::playerAction(int actionNumber)
 		break;
 
 	case UNATTACK:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI/HI_Attack_%d.png", 6, 0.1f);
+		playerAnimation = Character::createAnimationMultiSprite("images/PlayerKnight/Attack (%d).png", 10, 0.1f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(UNATTACK);
 		Character::switchingAction(playerSprite, playerAnimate, false);
@@ -142,7 +142,7 @@ void Player::playerAction(int actionNumber)
 		break;
 
 	case UJUMP:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI/HI_Jump_%d.png", 9, 0.3f);
+		playerAnimation = Character::createAnimationMultiSprite("images/PlayerKnight/Jump (%d).png", 10, 0.3f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(UJUMP);
 		Character::switchingAction(playerSprite, playerAnimate, false);

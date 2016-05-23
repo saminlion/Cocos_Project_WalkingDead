@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="10" tilewidth="32" tileheight="32" nextobjectid="8">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="10" tilewidth="32" tileheight="32" nextobjectid="9">
  <tileset firstgid="1" name="TestDesert" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="48" columns="8">
   <image source="tmw_desert_spacing.png" width="265" height="199"/>
  </tileset>
@@ -16,22 +16,25 @@
    </properties>
   </tile>
  </tileset>
- <layer name="Background" width="80" height="10">
+ <layer name="Background" width="40" height="10">
   <data encoding="base64" compression="zlib">
-   eJyTY2BgkBvFo3gUj+JRPIpH8SgexSMGM2HBhORJUadPoXn0cCcl5nBhwcjqsMnTUx0+fdSynxJzAElzU84=
+   eJyTY2BgkBvFo3gUj+IRiJmogKllDjbMNcgxAODTJ30=
   </data>
  </layer>
- <layer name="MetaInfo" width="80" height="10">
-  <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSgYBSMJGGLBRkgYmzw+daNgFJACABuHA9s=
-  </data>
- </layer>
- <objectgroup name="DragonSpawnPoints">
-  <object id="4" name="DragonSpawn2" x="1104.17" y="242.167"/>
-  <object id="5" name="DragonSpawn" x="782.333" y="244"/>
+ <objectgroup name="Objects">
+  <object id="1" name="SpawnPoint" x="113.583" y="275.917"/>
  </objectgroup>
- <objectgroup name="BirdSpawnPoints">
-  <object id="6" name="BirdSpawnPoint" x="912.5" y="242"/>
-  <object id="7" name="BirdSpawnPoint2" x="1007.5" y="240"/>
+ <layer name="MetaInfo" width="40" height="10" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIKRCQyxYCMkjE0en7qRBgBEfAPb
+  </data>
+ </layer>
+ <objectgroup name="WormSpawnPoints">
+  <object id="5" name="WormSpawn1" x="591.333" y="245"/>
+  <object id="8" name="WormSpawn2" x="1136" y="242"/>
+ </objectgroup>
+ <objectgroup name="CrapSpawnPoints">
+  <object id="6" name="CrapSpawnPoint1" x="781.5" y="242"/>
+  <object id="7" name="CrapSpawnPoint2" x="944.5" y="242"/>
  </objectgroup>
 </map>

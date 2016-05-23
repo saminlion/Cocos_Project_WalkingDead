@@ -122,62 +122,61 @@ TMXTiledMap* HelloWorld::CreateTmap(int mapNumber)
 
 		player->playerSprite->setPosition(Vec2(x, y));
 		player->playerSprite->setAnchorPoint(Vec2::ZERO);
-		player->playerSprite->setScale(1.5f);
+		player->playerSprite->setScale(0.15f);
 		this->addChild(player->playerSprite, 2);
 
 		player->playerAction(player->UWALK);
 	}
 
-	dragonPostions.clear();
+	wormPositions.clear();
 
-	birdPositions.clear();
+	crapPositions.clear();
 
-	log("Dragons Postion Size : %d", dragonPostions.size());
-	log("Birds Postion Size : %d", birdPositions.size());
+	log("worms Postion Size : %d", wormPositions.size());
+	log("craps Postion Size : %d", crapPositions.size());
 
-	character->_dragonPositions.clear();
-	character->_birdPositions.clear();
-
-	character->dragonPositions.clear();
-	character->birdPositions.clear();
-
-	log("_Dragons Postion Size : %d", character->_dragonPositions.size());
-	log("_Birds Postion Size : %d", character->_birdPositions.size());
-
+	character->_wormPositions.clear();
+	character->_crapPositions.clear();
 	character->_dkPositions.clear();
 
+	character->wormPositions.clear();
+	character->crapPositions.clear();
+
+	log("_worms Postion Size : %d", character->_wormPositions.size());
+	log("_craps Postion Size : %d", character->_crapPositions.size());
+	
 	//dkPositions.clear();
 
-	auto dragonSpawnPoint = newTileMap->getObjectGroup("DragonSpawnPoints");
+	auto wormspawnPoint = newTileMap->getObjectGroup("WormSpawnPoints");
 
-	auto birdSpawnPoint = newTileMap->getObjectGroup("BirdSpawnPoints");
+	auto crapspawnPoint = newTileMap->getObjectGroup("CrapSpawnPoints");
 	
-	character->getDragonSpawnPointPositions(dragonSpawnPoint);
+	character->getwormspawnPointPositions(wormspawnPoint);
 
-	character->getBirdSpawnPointPositions(birdSpawnPoint);
+	character->getcrapspawnPointPositions(crapspawnPoint);
 		
 	return newTileMap;
 }
 
 void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 {
-	dragonPostions = character->setDragonPosition();
+	wormPositions = character->setWormPosition();
 
-	birdPositions = character->setBirdPosition();
+	crapPositions = character->setCrapPosition();
 
 	log("SpawnPoint");
 
-	log("_Dragons Postion Size : %d", character->_dragonPositions.size());
-	log("_Birds Postion Size : %d", character->_birdPositions.size());
+	log("_worms Postion Size : %d", character->_wormPositions.size());
+	log("_craps Postion Size : %d", character->_crapPositions.size());
 
-	log("Dragons Postion Size : %d", dragonPostions.size());
-	log("Birds Postion Size : %d", birdPositions.size());
+	log("worms Postion Size : %d", wormPositions.size());
+	log("craps Postion Size : %d", crapPositions.size());
 
-	for (int j = 0; j < dragonPostions.size() + birdPositions.size(); j++)
+	for (int j = 0; j < wormPositions.size() + crapPositions.size(); j++)
 	{
-		if (j < dragonPostions.size())
+		if (j < wormPositions.size())
 		{
-			position = (Sprite*)(dragonPostions.at(j));
+			position = (Sprite*)(wormPositions.at(j));
 
 			log("%d", j);
 
@@ -191,15 +190,17 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 			}
 
 			positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
+
+			positions.push_back(position);
 
 			positionDummies.push_back(positionDummy);
 
 			//log("Position Dummies Size : %d", positionDummies.size());
 		}
 
-		if (j >= dragonPostions.size() && j < dragonPostions.size() + birdPositions.size())
+		if (j >= wormPositions.size() && j < wormPositions.size() + crapPositions.size())
 		{
-			position = (Sprite*)birdPositions.at(j - dragonPostions.size());
+			position = (Sprite*)crapPositions.at(j - wormPositions.size());
 
 			log("%d", j);
 
@@ -213,6 +214,8 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 			}
 
 			positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
+		
+			positions.push_back(position);
 
 			positionDummies.push_back(positionDummy);
 		}
@@ -246,7 +249,7 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 //
 //				if (spriteData->getName() == "Dragon")
 //				{
-//					if (spriteData == dragons.at(i))
+//					if (spriteData == worms.at(i))
 //					{
 //						log("%d", i);
 //						spriteData->removeFromParent();
@@ -256,7 +259,7 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 //				if (spriteData->getName() == "Bird" )
 //				{
 //					log("%d", i);
-//					if (spriteData == birds.at(i))
+//					if (spriteData == craps.at(i))
 //					{
 //						spriteData->removeFromParent();
 //					}
@@ -270,20 +273,20 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 //			}
 //			log("Check2");
 //
-//			dragons.erase(dragons.begin(), dragons.begin() + 2);
-//			dragonPostions.erase(dragonPostions.begin(), dragonPostions.begin() + 2);
-//			birds.erase(birds.begin(), birds.begin() + 2);
-//			birdPositions.erase(birdPositions.begin(), birdPositions.begin() + 2);
+//			worms.erase(worms.begin(), worms.begin() + 2);
+//			wormPositions.erase(wormPositions.begin(), wormPositions.begin() + 2);
+//			craps.erase(craps.begin(), craps.begin() + 2);
+//			crapPositions.erase(crapPositions.begin(), crapPositions.begin() + 2);
 //			enemyDatas.erase(enemyDatas.begin() + 4, enemyDatas.end());
 //			positions.erase(positions.begin() + 4, positions.end());
 //			positionDummies.erase(positionDummies.begin() + 4, positionDummies.end());
 //			enemyBodies.erase(enemyBodies.begin() + 4, enemyBodies.end());
 //			character->_spawnPositions.erase(character->_spawnPositions.begin(), character->_spawnPositions.begin() + 4);
 //
-//			log("Dragons Size : %d", dragons.size());
-//			log("Birds Size : %d", birds.size());
-//			log("Dragons Size : %d", dragonPostions.size());
-//			log("Birds Size : %d", birdPositions.size());
+//			log("worms Size : %d", worms.size());
+//			log("craps Size : %d", craps.size());
+//			log("worms Size : %d", wormPositions.size());
+//			log("craps Size : %d", crapPositions.size());
 //		}
 //		log("Check3");
 //		break;
@@ -295,8 +298,8 @@ void HelloWorld::MoveMap(float f)
 	//log("Tmap X position : %f", tmap->getPositionX());
 	//log("Background_x : %f", backgroud_x);
 
-	backgroud_x -= 2;
-
+	backgroud_x -= 0.2f;
+	
 	//log("%f", -480 + tmap->getContentSize().width);
 	//log("tmap X Position : %f", tmap->getPositionX());
 
@@ -304,98 +307,111 @@ void HelloWorld::MoveMap(float f)
 	{
 		log("Switch and Change tmap");
 
-		backgroud_x = 0;
+		log("tmap Position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
+		log("tmap2 Position : %f ... %f", tmap2->getPositionX(), tmap2->getPositionY());
 
-		//removeChild(tmap, true);
+		//backgroud_x = 0;
+
+		//tmap->setVisible(false);
+		//tmap->removeFromParentAndCleanup(true);
+		//removeChild(tmap, false);
+		//tmap->setPosition(Vec2(tmap2->convertToWorldSpace(this->getPosition()).x + tmap2->getContentSize().width, 0));
+
+		tmap->setPosition(Vec2(tmap2->getPosition().x + tmap2->getContentSize().width, 0));
+
+		log("tmap Position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
+
+		Vec2 test = Vec2(tmap2->getPosition().x + tmap2->getContentSize().width, 0);
+
+		log("test position : %f ... %f", test.x, test.y);
+
 		//log("tmaps Size : %d", tmaps.size());
 
 		//swap(tmaps.at(0), tmaps.at(1));
 
 		//tmaps.erase(tmaps.begin());
 
-		this->SpawnEnemy();
+		//this->SpawnEnemy();
 
 		//this->DestoryTileMap();
 
-		//log("Dragons Postion Size : %d", dragonPostions.size());
-		//log("Birds Postion Size : %d", birdPositions.size());
+		//log("worms Postion Size : %d", wormPositions.size());
+		//log("craps Postion Size : %d", crapPositions.size());
 		//log("Positions Size : %d", positions.size());
 		//log("Position Dummies Size : %d", positionDummies.size());
 		//log("tmaps Size : %d", tmaps.size());
-		
-		//tmap = tmap2;
-
-		//auto tmap3 = CreateTmap(currentLevel + 1);
-		//tmap3->setPosition(tmap->getContentSize().width, 0);
-		//tmap3->setAnchorPoint(Vec2::ZERO);
-		//this->addChild(tmap3, -1, 11);
-		//tmaps.push_back(tmap3);
-
-		//tmap2 = tmap3;
 
 		//SetTmap(tmaps, false);
+
+		backgroud_x = 0;
 	}
 
+	tmap->setPosition(Vec2(backgroud_x + tmap->getPositionX(), 0));
 	tmap2->setPosition(Vec2(backgroud_x + tmap->getContentSize().width, 0));
-	tmap->setPosition(Vec2(backgroud_x, 0));
-	detectGround(backgroud_x);
+
+	//detectGround(backgroud_x);
+
+	log("tmap Position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
+	log("tmap2 Position : %f ... %f", tmap2->getPositionX(), tmap2->getPositionY());
 }
+
+
 
 void HelloWorld::SpawnEnemy()
 {
 	//vector<Sprite*> dkPositions = character->setDKPosition();
 
-	dragons = enemy->CreateDragon(dragonPostions);
-	birds = enemy->CreateBird(birdPositions);
+	enemy->firstEnemySprites.clear();
+	enemy->secondEnemySprites.clear();
 
-#pragma region Dragon
+	worms = enemy->CreateFirstEnemy(wormPositions);
+	craps = enemy->CreateSecondEnemy(crapPositions);
 
-	log("Dragons Size : %d", dragons.size());
-	log("Birds Size : %d", birds.size());
+	log("worms Size : %d", worms.size());
+	log("craps Size : %d", craps.size());
 
 	for (int i = 0; i < positionDummies.size(); i++)
 	{
 		positionDummy = positionDummies.at(i);
 
-		if (i < dragons.size())
+		if (i < worms.size())
 		{
 			log("Dragon Index : %d", i);
 
-			dragon = (Sprite*)dragons.at(i);
+			worm = (Sprite*)worms.at(i);
 
-			dragon->setPosition(positionDummy.x, positionDummy.y - 30.0f);
+			worm->setPosition(positionDummy.x, positionDummy.y + 30);
 
-			auto eBody = this->addBody(positionDummy, dragon->getContentSize() / 2, b2_dynamicBody, dragon, 4, ENEMY, PLAYER);
+			worm->setScale(2.0f);
+
+			auto eBody = this->addBody(positionDummy, worm->getContentSize(), b2_dynamicBody, worm, 4, ENEMY, PLAYER);
 
 			enemyBodies.push_back(eBody);
+
+			enemyDatas.pushBack(worm);
 		}
 
-		else if (i >= dragons.size() && i < birds.size() + dragons.size())
+		else if (i >= worms.size() && i < craps.size() + worms.size())
 		{
 			log("Bird Index : %d", i);
 
-			bird = (Sprite*)birds.at(i - dragons.size());
+			crap = (Sprite*)craps.at(i - worms.size());
 
-			bird->setPosition(positionDummy.x, positionDummy.y - 30.0f);
+			crap->setPosition(positionDummy.x, positionDummy.y + 30);
 
-			auto eBody = this->addBody(positionDummy, bird->getContentSize() / 2, b2_dynamicBody, bird, 4, ENEMY, PLAYER);
+			auto eBody = this->addBody(positionDummy, crap->getContentSize(), b2_dynamicBody, crap, 4, ENEMY, PLAYER);
 
 			enemyBodies.push_back(eBody);
+
+			enemyDatas.pushBack(crap);
 		}
-		//else if (i < dks.size() + birds.size() + dragons.size())
+		//else if (i < dks.size() + craps.size() + worms.size())
+
 	}
 
 	log("Enemybodies : %d", enemyBodies.size());
 
-	for (int i = 0; i < enemyBodies.size(); i++)
-	{
-		auto eb = (b2Body*)enemyBodies.at(i);
-		auto eSP = (Sprite*)eb->GetUserData();
-
-		enemyDatas.pushBack(eSP);
-	}
-
-#pragma endregion
+	log("EnemyDatas : %d", enemyDatas.size());
 }
 
 void HelloWorld::ShootFire(float dt)
@@ -881,10 +897,9 @@ void HelloWorld::tick(float dt)
 		}
 	}
 
-	log("EnemyDatas Size : %d", enemyDatas.size());
-	log("EnemyBoides Size : %d", enemyBodies.size());
-	log("Position Size : %d", positions.size());
-	log("Position Dummies : %d", positionDummies.size());
+	//log("EnemyDatas Size : %d", enemyDatas.size());
+	//log("EnemyBoides Size : %d", enemyBodies.size());
+	//log("Position Dummies : %d", positionDummies.size());
 
 	if (enemyDatas.size() != 0)
 	{
@@ -892,14 +907,11 @@ void HelloWorld::tick(float dt)
 		{
 			auto eSp = (Sprite*)enemyDatas.at(i);
 
+			position = (Sprite*)(positions.at(i));
+
 			positionDummy = positionDummies.at(i);
 
-			position = (Sprite*)positions.at(i);
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
-			}
+			positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y + 30);
 			
 			if (!killSuccess)
 			{
@@ -908,31 +920,31 @@ void HelloWorld::tick(float dt)
 				enemyBodyPos = b2Vec2(enemyBody->GetWorldCenter());
 
 				enemyBody->SetTransform(b2Vec2(positionDummy.x / PTM_RATIO, positionDummy.y / PTM_RATIO), 0);
-
-				eSp->setPosition(positionDummy);
-
+				
+				eSp->setPosition(Vec2(enemyBody->GetPosition().x * PTM_RATIO, enemyBody->GetPosition().y * PTM_RATIO));
+				//eSp->setPosition(Vec2(positionDummy.x, positionDummy.y));
+				
 				eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
 			}
+
 			else
 			{
 				if (eSp != hitSprite)
 				{
-					positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
-
 					enemyBody = (b2Body*)enemyBodies.at(i);
 
 					enemyBodyPos = b2Vec2(enemyBody->GetWorldCenter());
 
 					enemyBody->SetTransform(b2Vec2(positionDummy.x / PTM_RATIO, positionDummy.y / PTM_RATIO), 0);
 
-					eSp->setPosition(positionDummy);
+					eSp->setPosition(Vec2(enemyBody->GetPosition().x * PTM_RATIO, enemyBody->GetPosition().y * PTM_RATIO));
 
 					eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
 				}
 
 				else
 				{
-					eSp->setPosition(Vec2(hitBody->GetPosition().x * PTM_RATIO, hitBody->GetPosition().y * PTM_RATIO));
+					hitSprite->setPosition(Vec2(hitBody->GetPosition().x * PTM_RATIO, hitBody->GetPosition().y * PTM_RATIO));
 
 					deathScale -= 0.06f;
 
@@ -941,7 +953,7 @@ void HelloWorld::tick(float dt)
 						deathScale = 0.f;
 					}
 
-					eSp->setScale(deathScale);
+					hitSprite->setScale(deathScale);
 
 					bool oneTime = this->isScheduled(schedule_selector(HelloWorld::EnemyDeath));
 
@@ -1010,11 +1022,6 @@ void HelloWorld::tick(float dt)
 		//		oneTime = true;
 		//	}
 		//}
-	}
-
-	if (enemyDatas.size() == 0)
-	{
-
 	}
 }
 

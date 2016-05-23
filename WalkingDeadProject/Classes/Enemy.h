@@ -15,25 +15,25 @@ public:
 
 	vector<Sprite*> enemySprites;
 
-	std::vector<Sprite*> CreateDragon(std::vector<Sprite*> positions);
-	std::vector<Sprite*> CreateBird(std::vector<Sprite*> positions);
+	std::vector<Sprite*> CreateFirstEnemy(std::vector<Sprite*> positions);
+	std::vector<Sprite*> CreateSecondEnemy(std::vector<Sprite*> positions);
 	Vector<Sprite*> CreateDK();
 
-	vector<Sprite*> dragonSprites;
-	std::vector<Sprite*> birdSprites;
+	vector<Sprite*> firstEnemySprites;
+	std::vector<Sprite*> secondEnemySprites;
 
 	Sprite* fireSprite;
-	Sprite* dragonSprite;
+	Sprite* firstEnemySprite;
 
 	Vector<Sprite*> dkSprites;
 
-	Animation* dragonAnimation;
-	Animate* dragonAnimate;
-	Sequence* dragonSequence;
+	Animation* firstEnemyAnimation;
+	Animate* firstEnemyAnimate;
+	Sequence* wormsequence;
 
-	Animation* birdAnimation;
-	Animate* birdAnimate;
-	Sequence* birdSequence;
+	Animation* secondEnemyAnimation;
+	Animate* secondEnemyAnimate;
+	Sequence* crapsequence;
 
 	Animation* dkAnimation;
 	Animate* dkAnimate;
