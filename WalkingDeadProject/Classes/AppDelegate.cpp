@@ -38,7 +38,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	auto glview = director->getOpenGLView();
 	if (!glview) {
 
-		glview = GLViewImpl::createWithRect("ResolutionEx", Rect(0, 0, 600, 320));
+		glview = GLViewImpl::createWithRect("ResolutionEx", Rect(0, 0, 480, 320));
 		director->setOpenGLView(glview);
 	}
 

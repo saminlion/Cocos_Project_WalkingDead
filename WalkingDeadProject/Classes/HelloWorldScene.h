@@ -62,7 +62,7 @@ public:
 	float backgroud_x;
 	int currentLevel = 0;
 
-	void MoveMap(float f);
+	void MoveMap();
 	void detectGround(float bx);
 	TMXTiledMap* CreateTmap(int mapNumber);
 	void SetTmap(int tileMapNumber, bool firstTime);
@@ -85,7 +85,6 @@ public:
 	void AfterAction(float dt);
 	void EnemyDeath(float dt);
 	void ShootFire(float dt);
-	void DestoryTileMap();
 
 	//void FireDeath(float dt);
 	void SpawnEnemy();
@@ -139,8 +138,8 @@ public:
 	TMXLayer* test;
 
 	//TMXObjectGroup* playerSpawnPoint;
-	//TMXObjectGroup* wormspawnPoint;
-	//TMXObjectGroup* crapspawnPoint;
+	TMXObjectGroup* wormspawnPoint;
+	TMXObjectGroup* crapspawnPoint;
 	//TMXObjectGroup* dkSpanwPoint;
 
 	vector<Sprite*> wormPositions;
@@ -151,7 +150,7 @@ public:
 	Sprite* worm;
 	Sprite* crap;
 	Sprite* position;
-
+	Sprite* hitPosition;
 	Sprite* effectDummy1;
 	Sprite* effectDummy2;
 	Sprite* effectDummy3;

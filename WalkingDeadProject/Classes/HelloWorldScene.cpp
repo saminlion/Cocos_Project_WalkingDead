@@ -41,15 +41,16 @@ bool HelloWorld::init()
 	count = 0;
 	
 	tmap = CreateTmap(StageNumber::Stage0);
+	tmap->setPosition(Vec2(0, 0));
 	tmap->setAnchorPoint(Vec2::ZERO);
 	this->addChild(tmap, -1, 11);
 	SetTmap(1, true);
 
 	tmap2 = CreateTmap(currentLevel + 1);
-	tmap2->setPosition(tmap->getContentSize().width, 0);
+	tmap2->setPosition(Vec2(tmap->getContentSize().width, 0));
 	tmap2->setAnchorPoint(Vec2::ZERO);
 	this->addChild(tmap2, -1, 11);
-	SetTmap(2, false);
+	SetTmap(2, true);
 
 	attackButton = Sprite::create("images/UI/AttackButton.png");
 	attackButton->setPosition(440, 20);
@@ -81,17 +82,7 @@ bool HelloWorld::init()
 
 #pragma endregion
 
-	//if (this->createBox2dWorld(true))
-	//{
-	//	//SetTmap(tmaps, true);
-	//	SetTmap(tmap, true);
-	//	SetTmap(tmap2, false);
-
-	//	this->schedule(schedule_selector(HelloWorld::tick), 1 / 60.f);
-	//}
-
-	this->schedule(schedule_selector(HelloWorld::MoveMap));
-	//this->schedule(schedule_selector(HelloWorld::ShootFire), 1.0f);
+	this->MoveMap();
 
 	return true;
 }
@@ -128,65 +119,87 @@ TMXTiledMap* HelloWorld::CreateTmap(int mapNumber)
 		player->playerAction(player->UWALK);
 	}
 
-	wormPositions.clear();
-
-	crapPositions.clear();
-
-	log("worms Postion Size : %d", wormPositions.size());
-	log("craps Postion Size : %d", crapPositions.size());
-
-	character->_wormPositions.clear();
-	character->_crapPositions.clear();
-	character->_dkPositions.clear();
-
-	character->wormPositions.clear();
-	character->crapPositions.clear();
-
-	log("_worms Postion Size : %d", character->_wormPositions.size());
-	log("_craps Postion Size : %d", character->_crapPositions.size());
-	
-	//dkPositions.clear();
-
-	auto wormspawnPoint = newTileMap->getObjectGroup("WormSpawnPoints");
-
-	auto crapspawnPoint = newTileMap->getObjectGroup("CrapSpawnPoints");
-	
-	character->getwormspawnPointPositions(wormspawnPoint);
-
-	character->getcrapspawnPointPositions(crapspawnPoint);
-		
 	return newTileMap;
 }
 
 void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 {
-	wormPositions = character->setWormPosition();
+	wormPositions.clear();
+	crapPositions.clear();
 
-	crapPositions = character->setCrapPosition();
+	character->_wormPositions.clear();
+	character->_crapPositions.clear();
+
+	character->wormPositions.clear();
+	character->crapPositions.clear();
 
 	log("SpawnPoint");
 
-	log("_worms Postion Size : %d", character->_wormPositions.size());
-	log("_craps Postion Size : %d", character->_crapPositions.size());
+	if (tileMapNumber == 1)
+	{
+		wormspawnPoint = tmap->getObjectGroup("WormSpawnPoints");
 
-	log("worms Postion Size : %d", wormPositions.size());
-	log("craps Postion Size : %d", crapPositions.size());
+		crapspawnPoint = tmap->getObjectGroup("CrapSpawnPoints");
 
+		character->getwormspawnPointPositions(wormspawnPoint);
+
+		character->getcrapspawnPointPositions(crapspawnPoint);
+
+		wormPositions = character->setWormPosition();
+
+		crapPositions = character->setCrapPosition();
+	}
+
+	else
+	{
+		wormspawnPoint = tmap2->getObjectGroup("WormSpawnPoints");
+
+		crapspawnPoint = tmap2->getObjectGroup("CrapSpawnPoints");
+
+		character->getwormspawnPointPositions(wormspawnPoint);
+
+		character->getcrapspawnPointPositions(crapspawnPoint);
+
+		wormPositions = character->setWormPosition();
+
+		crapPositions = character->setCrapPosition();
+	}
+	
 	for (int j = 0; j < wormPositions.size() + crapPositions.size(); j++)
 	{
 		if (j < wormPositions.size())
 		{
 			position = (Sprite*)(wormPositions.at(j));
 
-			log("%d", j);
+			log("WormPosition index : %d", j);
 
 			if (tileMapNumber == 1)
 			{
-				tmap->addChild(position);
+				log("Tile Map 1");
+
+				if (!firstTime)
+				{
+					tmap->removeAllChildrenWithCleanup(true);
+					tmap->addChild(position, 0, j);
+				}
+				else
+				{
+					tmap->addChild(position, 0, j);
+				}
 			}
 			else
 			{
-				tmap2->addChild(position);
+				log("Tile Map 2");
+
+				if (!firstTime)
+				{
+					tmap2->removeAllChildrenWithCleanup(true);
+					tmap2->addChild(position, 0, j);
+				}
+				else
+				{
+					tmap2->addChild(position, 0, j);
+				}
 			}
 
 			positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
@@ -194,23 +207,42 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 			positions.push_back(position);
 
 			positionDummies.push_back(positionDummy);
-
-			//log("Position Dummies Size : %d", positionDummies.size());
 		}
 
 		if (j >= wormPositions.size() && j < wormPositions.size() + crapPositions.size())
 		{
 			position = (Sprite*)crapPositions.at(j - wormPositions.size());
 
-			log("%d", j);
+			log("CrapPosition index : %d", j);
 
 			if (tileMapNumber == 1)
 			{
-				tmap->addChild(position);
+				log("Tile Map 1");
+
+				if (!firstTime)
+				{
+					tmap->removeAllChildrenWithCleanup(true);
+					tmap->addChild(position, 0, j);
+				}
+				else
+				{
+					tmap->addChild(position, 0, j);
+				}
 			}
+
 			else
 			{
-				tmap2->addChild(position);
+				log("Tile Map 2");
+
+				if (!firstTime)
+				{
+					tmap2->removeAllChildrenWithCleanup(true);
+					tmap2->addChild(position, 0, j);
+				}
+				else
+				{
+					tmap2->addChild(position, 0, j);
+				}
 			}
 
 			positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y);
@@ -226,139 +258,27 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 	this->SpawnEnemy();
 }
 
-//void HelloWorld::DestoryTileMap()
-//{
-//	for (b2Body* b = _world->GetBodyList(); b != enemyBodies.at(4); b = b->GetNext())
-//	{
-//		if (b->GetUserData() != nullptr)
-//		{
-//			auto spriteData = (Sprite*)b->GetUserData();
-//
-//			for (int i = 0; i < 4; i++)
-//			{
-//				//0, 1, 2, 3
-//				//4, 5, 6, 7
-//
-//				log("Check1");
-//
-//				enemyDatas.swap(i, i + 4);
-//
-//				std::swap(enemyBodies.at(i), enemyBodies.at(i + 4));
-//				std::swap(positions.at(i), positions.at(i + 4));
-//				std::swap(positionDummies.at(i), positionDummies.at(i + 4));
-//
-//				if (spriteData->getName() == "Dragon")
-//				{
-//					if (spriteData == worms.at(i))
-//					{
-//						log("%d", i);
-//						spriteData->removeFromParent();
-//					}
-//				}
-//
-//				if (spriteData->getName() == "Bird" )
-//				{
-//					log("%d", i);
-//					if (spriteData == craps.at(i))
-//					{
-//						spriteData->removeFromParent();
-//					}
-//				}
-//
-//				//spriteData->getName() == "DK"
-//				if (b == enemyBodies.at(i))
-//				{
-//					_world->DestroyBody(b);
-//				}
-//			}
-//			log("Check2");
-//
-//			worms.erase(worms.begin(), worms.begin() + 2);
-//			wormPositions.erase(wormPositions.begin(), wormPositions.begin() + 2);
-//			craps.erase(craps.begin(), craps.begin() + 2);
-//			crapPositions.erase(crapPositions.begin(), crapPositions.begin() + 2);
-//			enemyDatas.erase(enemyDatas.begin() + 4, enemyDatas.end());
-//			positions.erase(positions.begin() + 4, positions.end());
-//			positionDummies.erase(positionDummies.begin() + 4, positionDummies.end());
-//			enemyBodies.erase(enemyBodies.begin() + 4, enemyBodies.end());
-//			character->_spawnPositions.erase(character->_spawnPositions.begin(), character->_spawnPositions.begin() + 4);
-//
-//			log("worms Size : %d", worms.size());
-//			log("craps Size : %d", craps.size());
-//			log("worms Size : %d", wormPositions.size());
-//			log("craps Size : %d", crapPositions.size());
-//		}
-//		log("Check3");
-//		break;
-//	}
-//}
-
-void HelloWorld::MoveMap(float f)
+void HelloWorld::MoveMap()
 {
-	//log("Tmap X position : %f", tmap->getPositionX());
-	//log("Background_x : %f", backgroud_x);
+	auto move1 = Sequence::create(MoveBy::create(15, Vec2(-tmap->getContentSize().width, 0)),
+		Place::create(Vec2(tmap2->getContentSize().width, 0)),
+		CallFunc::create(CC_CALLBACK_0(HelloWorld::SetTmap, this, 1, false)),
+		MoveBy::create(15, Vec2(-tmap->getContentSize().width, 0)),
+		nullptr);
 
-	backgroud_x -= 0.2f;
-	
-	//log("%f", -480 + tmap->getContentSize().width);
-	//log("tmap X Position : %f", tmap->getPositionX());
+	auto move2 = Sequence::create(MoveBy::create(15, Vec2(-tmap2->getContentSize().width, 0)),
+		MoveBy::create(15, Vec2(-tmap2->getContentSize().width, 0)),
+		Place::create(Vec2(tmap->getContentSize().width, 0)),
+		CallFunc::create(CC_CALLBACK_0(HelloWorld::SetTmap, this, 2, false)),
+		nullptr);
 
-	if (tmap->getPositionX() == -(480 + tmap->getContentSize().width))
-	{
-		log("Switch and Change tmap");
-
-		log("tmap Position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
-		log("tmap2 Position : %f ... %f", tmap2->getPositionX(), tmap2->getPositionY());
-
-		//backgroud_x = 0;
-
-		//tmap->setVisible(false);
-		//tmap->removeFromParentAndCleanup(true);
-		//removeChild(tmap, false);
-		//tmap->setPosition(Vec2(tmap2->convertToWorldSpace(this->getPosition()).x + tmap2->getContentSize().width, 0));
-
-		tmap->setPosition(Vec2(tmap2->getPosition().x + tmap2->getContentSize().width, 0));
-
-		log("tmap Position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
-
-		Vec2 test = Vec2(tmap2->getPosition().x + tmap2->getContentSize().width, 0);
-
-		log("test position : %f ... %f", test.x, test.y);
-
-		//log("tmaps Size : %d", tmaps.size());
-
-		//swap(tmaps.at(0), tmaps.at(1));
-
-		//tmaps.erase(tmaps.begin());
-
-		//this->SpawnEnemy();
-
-		//this->DestoryTileMap();
-
-		//log("worms Postion Size : %d", wormPositions.size());
-		//log("craps Postion Size : %d", crapPositions.size());
-		//log("Positions Size : %d", positions.size());
-		//log("Position Dummies Size : %d", positionDummies.size());
-		//log("tmaps Size : %d", tmaps.size());
-
-		//SetTmap(tmaps, false);
-
-		backgroud_x = 0;
-	}
-
-	tmap->setPosition(Vec2(backgroud_x + tmap->getPositionX(), 0));
-	tmap2->setPosition(Vec2(backgroud_x + tmap->getContentSize().width, 0));
-
-	//detectGround(backgroud_x);
-
-	log("tmap Position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
-	log("tmap2 Position : %f ... %f", tmap2->getPositionX(), tmap2->getPositionY());
+	tmap->runAction(RepeatForever::create(move1));
+	tmap2->runAction(RepeatForever::create(move2));
 }
-
-
 
 void HelloWorld::SpawnEnemy()
 {
+	log("Spawn Enemy");
 	//vector<Sprite*> dkPositions = character->setDKPosition();
 
 	enemy->firstEnemySprites.clear();
@@ -376,7 +296,7 @@ void HelloWorld::SpawnEnemy()
 
 		if (i < worms.size())
 		{
-			log("Dragon Index : %d", i);
+			log("Worm Index : %d", i);
 
 			worm = (Sprite*)worms.at(i);
 
@@ -384,7 +304,7 @@ void HelloWorld::SpawnEnemy()
 
 			worm->setScale(2.0f);
 
-			auto eBody = this->addBody(positionDummy, worm->getContentSize(), b2_dynamicBody, worm, 4, ENEMY, PLAYER);
+			auto eBody = this->addBody(positionDummy, worm->getContentSize() * 2, b2_dynamicBody, worm, 4, ENEMY, PLAYER);
 
 			enemyBodies.push_back(eBody);
 
@@ -393,7 +313,7 @@ void HelloWorld::SpawnEnemy()
 
 		else if (i >= worms.size() && i < craps.size() + worms.size())
 		{
-			log("Bird Index : %d", i);
+			log("Crap Index : %d", i);
 
 			crap = (Sprite*)craps.at(i - worms.size());
 
@@ -429,6 +349,8 @@ void HelloWorld::ShootFire(float dt)
 
 void HelloWorld::EnemyDeath(float dt)
 {
+	log("Enemy Death Call");
+
 	killSuccess = false;
 
 	for (int i = 0; i < enemyDatas.size(); i++)
@@ -484,12 +406,24 @@ void HelloWorld::clearSpriteBody(float dt)
 			{
 				if (spriteData == hitSprite && b == hitBody && _world->IsLocked() == false)
 				{
+					//log("Get HitPosition Tag : %d", hitPosition->getTag());
+
+					//hitPosition->removeFromParentAndCleanup(true);
+
 					this->removeChild(hitSprite, true);
+
 					_world->DestroyBody(hitBody);
+					
+					//hitSprite->release();
+					//hitPosition->release();
+
+					//if (position == hitPosition)
+					//{
+					//	log("Position Remove");
+					//	hitPosition->removeFromParent();
+					//}
 
 					log("Clear Done");
-
-					//this->SpawnEnemy();
 
 					break;
 				}
@@ -789,7 +723,7 @@ void HelloWorld::BeginContact(b2Contact* contact)
 	log("Impact Name : %s", impact->getName().c_str());
 	log("Impacted Name : %s", impacted->getName().c_str());
 
-	if (impacted->getName() == "Dragon" || impacted->getName() == "Bird" || impacted->getName() == "DK" || impact->getName() == "Dragon" || impact->getName() == "Bird" || impact->getName() == "DK")
+	if (impacted->getName() == "Worm" || impacted->getName() == "Crap" || impacted->getName() == "DK" || impact->getName() == "Worm" || impact->getName() == "Crap" || impact->getName() == "DK")
 	{
 		log("Enemy Vs Player");
 
@@ -798,6 +732,8 @@ void HelloWorld::BeginContact(b2Contact* contact)
 			if (bodyA == enemyBodies.at(i))
 			{
 				hitSprite = (Sprite*)bodyA->GetUserData();
+				
+				///tmap->removeChild(position, true);
 
 				log("HitSprite Name : %s", hitSprite->getName().c_str());
 
@@ -805,12 +741,17 @@ void HelloWorld::BeginContact(b2Contact* contact)
 
 				log("Vector Index Number : %d", i);
 
+				hitPosition = positions.at(i);
+
+				log("Get HitPosition Tag : %d", hitPosition->getTag());
+
 				hitBody = enemyBodies.at(i);
 
 				hitBody->ApplyForce(b2Vec2(1000, 800), hitBody->GetWorldCenter(), true);
 
 				killSuccess = true;
 			}
+
 			else if (bodyB == enemyBodies.at(i))
 			{
 				hitSprite = (Sprite*)bodyB->GetUserData();
@@ -820,6 +761,8 @@ void HelloWorld::BeginContact(b2Contact* contact)
 				hitIndex = i;
 
 				log("Vector Index Number : %d", i);
+
+				hitPosition = positions.at(i);
 
 				hitBody = enemyBodies.at(i);
 
@@ -877,6 +820,9 @@ void HelloWorld::tick(float dt)
 
 	_world->Step(dt, velocityIterations, positionIterations);
 
+	//log("tmap position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
+	//log("tmap2 position : %f ... %f", tmap2->getPositionX(), tmap2->getPositionY());
+
 	for (b2Body* b = _world->GetBodyList(); b; b = b->GetNext())
 	{
 		if (b->GetUserData() != nullptr)
@@ -885,7 +831,7 @@ void HelloWorld::tick(float dt)
 
 			//log("Check SpriteData Name : %s", spriteData->getName().c_str());
 
-			if (spriteData->getName() != "Dragon" || spriteData->getName() != "Bird" || spriteData->getName() != "DK")
+			if (spriteData->getName() != "Worm" || spriteData->getName() != "Crap" || spriteData->getName() != "DK")
 			{
 				spriteData->setPosition(Vec2(b->GetPosition().x * PTM_RATIO, b->GetPosition().y * PTM_RATIO));
 				spriteData->setRotation(-1 * CC_RADIANS_TO_DEGREES(b->GetAngle()));
@@ -897,9 +843,10 @@ void HelloWorld::tick(float dt)
 		}
 	}
 
-	//log("EnemyDatas Size : %d", enemyDatas.size());
-	//log("EnemyBoides Size : %d", enemyBodies.size());
-	//log("Position Dummies : %d", positionDummies.size());
+	log("EnemyDatas Size : %d", enemyDatas.size());
+	log("EnemyBoides Size : %d", enemyBodies.size());
+	log("Position Dummies : %d", positionDummies.size());
+	log("Position Size : %d", positions.size());
 
 	if (enemyDatas.size() != 0)
 	{
@@ -907,62 +854,64 @@ void HelloWorld::tick(float dt)
 		{
 			auto eSp = (Sprite*)enemyDatas.at(i);
 
-			position = (Sprite*)(positions.at(i));
+			//position = (Sprite*)(positions.at(i));
+			auto pos = (Sprite*)positions.at(i);
 
 			positionDummy = positionDummies.at(i);
-
-			positionDummy = Vec2(position->convertToWorldSpace(this->getPosition()).x, position->convertToWorldSpace(this->getPosition()).y + 30);
 			
-			if (!killSuccess)
+			log("Position Dummy %d Postion : %f ... %f", i, positionDummies.at(i).x, positionDummies.at(i).y);
+
+			log("Position %d Check : %d", i, positions.at(i)->getTag());
+
+			positionDummy = Vec2(pos->convertToWorldSpace(this->getPosition()).x, pos->convertToWorldSpace(this->getPosition()).y + 30);
+			
+			//log("Get esp position : %f .... %f", eSp->getPositionX(), eSp->getPositionY());
+
+			if (!killSuccess && eSp->getPosition().x > 0.f)
 			{
 				enemyBody = (b2Body*)enemyBodies.at(i);
 
 				enemyBodyPos = b2Vec2(enemyBody->GetWorldCenter());
 
 				enemyBody->SetTransform(b2Vec2(positionDummy.x / PTM_RATIO, positionDummy.y / PTM_RATIO), 0);
-				
+
 				eSp->setPosition(Vec2(enemyBody->GetPosition().x * PTM_RATIO, enemyBody->GetPosition().y * PTM_RATIO));
-				//eSp->setPosition(Vec2(positionDummy.x, positionDummy.y));
-				
+
 				eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
 			}
 
-			else
+			if (killSuccess)
 			{
-				if (eSp != hitSprite)
+				hitSprite->setPosition(Vec2(hitBody->GetPosition().x * PTM_RATIO, hitBody->GetPosition().y * PTM_RATIO));
+
+				deathScale -= 0.06f;
+
+				if (deathScale < 0.0f)
 				{
-					enemyBody = (b2Body*)enemyBodies.at(i);
-
-					enemyBodyPos = b2Vec2(enemyBody->GetWorldCenter());
-
-					enemyBody->SetTransform(b2Vec2(positionDummy.x / PTM_RATIO, positionDummy.y / PTM_RATIO), 0);
-
-					eSp->setPosition(Vec2(enemyBody->GetPosition().x * PTM_RATIO, enemyBody->GetPosition().y * PTM_RATIO));
-
-					eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
+					deathScale = 0.f;
 				}
 
-				else
+				hitSprite->setScale(deathScale);
+
+				bool oneTime = this->isScheduled(schedule_selector(HelloWorld::EnemyDeath));
+
+				if (!oneTime)
 				{
-					hitSprite->setPosition(Vec2(hitBody->GetPosition().x * PTM_RATIO, hitBody->GetPosition().y * PTM_RATIO));
-
-					deathScale -= 0.06f;
-
-					if (deathScale < 0.0f)
-					{
-						deathScale = 0.f;
-					}
-
-					hitSprite->setScale(deathScale);
-
-					bool oneTime = this->isScheduled(schedule_selector(HelloWorld::EnemyDeath));
-
-					if (!oneTime)
-					{
-						this->scheduleOnce(schedule_selector(HelloWorld::EnemyDeath), 1);
-						oneTime = true;
-					}
+					this->scheduleOnce(schedule_selector(HelloWorld::EnemyDeath), 1);
+					oneTime = true;
 				}
+			}
+
+			if (eSp->getPosition().x < 0.f)
+			{
+				//eSp->setVisible(false);
+
+				hitSprite = enemyDatas.at(i);
+				hitBody = enemyBodies.at(i);
+				hitIndex = i;
+				hitPosition = positions.at(i);
+				log("Get HitPosition Tag : %d", hitPosition->getTag());
+				killSuccess = true;
 			}
 		}
 	}

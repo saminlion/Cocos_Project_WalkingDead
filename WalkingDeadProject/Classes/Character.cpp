@@ -139,7 +139,7 @@ vector<Sprite*> Character::setWormPosition()
 		wormPositions.push_back(initPositionSprite);
 	}
 
-	_wormPositions.clear();
+	//_wormPositions.clear();
 
 	return wormPositions;
 }
@@ -178,7 +178,7 @@ vector<Sprite*> Character::setCrapPosition()
 		crapPositions.push_back(initPositionSprite);
 	}
 
-	_crapPositions.clear();
+	//_crapPositions.clear();
 
 	return crapPositions;
 }

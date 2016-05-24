@@ -17,7 +17,7 @@ std::vector<Sprite*> Enemy::CreateFirstEnemy(std::vector<Sprite*> positions)
 
 		firstEnemySprite->setTag(i);
 
-		firstEnemySprite->setName("Dragon");
+		firstEnemySprite->setName("Worm");
 
 		firstEnemyAnimate = Animate::create(firstEnemyAnimation);
 
@@ -39,7 +39,7 @@ std::vector<Sprite*> Enemy::CreateSecondEnemy(std::vector<Sprite*> positions)
 
 		secondEnemySprite->setTag(i);
 
-		secondEnemySprite->setName("Bird");
+		secondEnemySprite->setName("Crap");
 
 		secondEnemySprite->setScale(1.f);
 
