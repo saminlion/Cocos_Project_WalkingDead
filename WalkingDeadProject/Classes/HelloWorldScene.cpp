@@ -44,13 +44,13 @@ bool HelloWorld::init()
 	tmap->setPosition(Vec2(0, 0));
 	tmap->setAnchorPoint(Vec2::ZERO);
 	this->addChild(tmap, -1, 11);
-	SetTmap(1, true);
+	SetTmap(StageNumber::Stage0, true);
 
-	tmap2 = CreateTmap(currentLevel + 1);
+	tmap2 = CreateTmap(StageNumber::Stage1);
 	tmap2->setPosition(Vec2(tmap->getContentSize().width, 0));
 	tmap2->setAnchorPoint(Vec2::ZERO);
 	this->addChild(tmap2, -1, 11);
-	SetTmap(2, true);
+	SetTmap(StageNumber::Stage1, true);
 
 	attackButton = Sprite::create("images/UI/AttackButton.png");
 	attackButton->setPosition(440, 20);
@@ -109,12 +109,13 @@ TMXTiledMap* HelloWorld::CreateTmap(int mapNumber)
 		int x = spawnPoint["x"].asInt();
 		int y = spawnPoint["y"].asInt();
 
-		player->playerSprite = Sprite::create("images/HI/HI_Walk_1.png");
+		Vec2 playerPos = Vec2(x, y + 100);
 
-		player->playerSprite->setPosition(Vec2(x, y));
-		player->playerSprite->setAnchorPoint(Vec2::ZERO);
-		player->playerSprite->setScale(0.15f);
-		this->addChild(player->playerSprite, 2);
+		player->playerSprite = Sprite::create("images/PlayerKnight/Run (1).png");
+
+		player->playerSprite->setPosition(playerPos);
+		player->playerSprite->setScale(1.f);
+		//this->addChild(player->playerSprite, 2);
 
 		player->playerAction(player->UWALK);
 	}
@@ -135,7 +136,7 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 
 	log("SpawnPoint");
 
-	if (tileMapNumber == 1)
+	if (tileMapNumber == Stage0)
 	{
 		wormspawnPoint = tmap->getObjectGroup("WormSpawnPoints");
 
@@ -171,15 +172,11 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 		{
 			position = (Sprite*)(wormPositions.at(j));
 
-			log("WormPosition index : %d", j);
-
-			if (tileMapNumber == 1)
+			if (tileMapNumber == Stage0)
 			{
-				log("Tile Map 1");
-
 				if (!firstTime)
 				{
-					tmap->removeAllChildrenWithCleanup(true);
+					position->removeFromParentAndCleanup(true);
 					tmap->addChild(position, 0, j);
 				}
 				else
@@ -189,11 +186,9 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 			}
 			else
 			{
-				log("Tile Map 2");
-
 				if (!firstTime)
 				{
-					tmap2->removeAllChildrenWithCleanup(true);
+					position->removeFromParentAndCleanup(true);
 					tmap2->addChild(position, 0, j);
 				}
 				else
@@ -213,15 +208,11 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 		{
 			position = (Sprite*)crapPositions.at(j - wormPositions.size());
 
-			log("CrapPosition index : %d", j);
-
-			if (tileMapNumber == 1)
+			if (tileMapNumber == Stage0)
 			{
-				log("Tile Map 1");
-
 				if (!firstTime)
 				{
-					tmap->removeAllChildrenWithCleanup(true);
+					position->removeFromParentAndCleanup(true);
 					tmap->addChild(position, 0, j);
 				}
 				else
@@ -232,11 +223,9 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 
 			else
 			{
-				log("Tile Map 2");
-
 				if (!firstTime)
 				{
-					tmap2->removeAllChildrenWithCleanup(true);
+					position->removeFromParentAndCleanup(true);
 					tmap2->addChild(position, 0, j);
 				}
 				else
@@ -253,8 +242,6 @@ void HelloWorld::SetTmap(int tileMapNumber, bool firstTime)
 		}
 	}
 
-	log("Position Dummies Size : %d", positionDummies.size());
-
 	this->SpawnEnemy();
 }
 
@@ -262,14 +249,14 @@ void HelloWorld::MoveMap()
 {
 	auto move1 = Sequence::create(MoveBy::create(15, Vec2(-tmap->getContentSize().width, 0)),
 		Place::create(Vec2(tmap2->getContentSize().width, 0)),
-		CallFunc::create(CC_CALLBACK_0(HelloWorld::SetTmap, this, 1, false)),
+		CallFunc::create(CC_CALLBACK_0(HelloWorld::SetTmap, this, StageNumber::Stage0, false)),
 		MoveBy::create(15, Vec2(-tmap->getContentSize().width, 0)),
 		nullptr);
 
 	auto move2 = Sequence::create(MoveBy::create(15, Vec2(-tmap2->getContentSize().width, 0)),
 		MoveBy::create(15, Vec2(-tmap2->getContentSize().width, 0)),
 		Place::create(Vec2(tmap->getContentSize().width, 0)),
-		CallFunc::create(CC_CALLBACK_0(HelloWorld::SetTmap, this, 2, false)),
+		CallFunc::create(CC_CALLBACK_0(HelloWorld::SetTmap, this, StageNumber::Stage1, false)),
 		nullptr);
 
 	tmap->runAction(RepeatForever::create(move1));
@@ -279,7 +266,6 @@ void HelloWorld::MoveMap()
 void HelloWorld::SpawnEnemy()
 {
 	log("Spawn Enemy");
-	//vector<Sprite*> dkPositions = character->setDKPosition();
 
 	enemy->firstEnemySprites.clear();
 	enemy->secondEnemySprites.clear();
@@ -287,17 +273,12 @@ void HelloWorld::SpawnEnemy()
 	worms = enemy->CreateFirstEnemy(wormPositions);
 	craps = enemy->CreateSecondEnemy(crapPositions);
 
-	log("worms Size : %d", worms.size());
-	log("craps Size : %d", craps.size());
-
 	for (int i = 0; i < positionDummies.size(); i++)
 	{
 		positionDummy = positionDummies.at(i);
 
 		if (i < worms.size())
 		{
-			log("Worm Index : %d", i);
-
 			worm = (Sprite*)worms.at(i);
 
 			worm->setPosition(positionDummy.x, positionDummy.y + 30);
@@ -313,8 +294,6 @@ void HelloWorld::SpawnEnemy()
 
 		else if (i >= worms.size() && i < craps.size() + worms.size())
 		{
-			log("Crap Index : %d", i);
-
 			crap = (Sprite*)craps.at(i - worms.size());
 
 			crap->setPosition(positionDummy.x, positionDummy.y + 30);
@@ -325,109 +304,81 @@ void HelloWorld::SpawnEnemy()
 
 			enemyDatas.pushBack(crap);
 		}
-		//else if (i < dks.size() + craps.size() + worms.size())
-
 	}
-
-	log("Enemybodies : %d", enemyBodies.size());
-
-	log("EnemyDatas : %d", enemyDatas.size());
 }
 
 void HelloWorld::ShootFire(float dt)
 {
-	//log("Shooting fire");
+	log("Shooting fire");
 
-	//fireSprite = Sprite::create("images/Effect/Dragon_Fire_Effect_1.png");
-	//fireSprite->setScale(2.0f);
-
-	//projectileBody = this->addBody(positionDummy, fireSprite->getContentSize() / 2, b2_dynamicBody, fireSprite, 3, FIRE, PLAYER);
-	//projectileBody->ApplyLinearImpulse(b2Vec2(-1000.f, 0.f), projectileBody->GetWorldCenter(), true);
-
-	//this->unschedule(schedule_selector(HelloWorld::ShootFire));
-}
-
-void HelloWorld::EnemyDeath(float dt)
-{
-	log("Enemy Death Call");
-
-	killSuccess = false;
-
-	for (int i = 0; i < enemyDatas.size(); i++)
+	for (int i = 0; i < positionDummies.size(); i++)
 	{
-		auto spriteData = (Sprite*)enemyDatas.at(i);
-		auto spriteBody = (b2Body*)enemyBodies.at(i);
+		positionDummy = positionDummies.at(i);
 
-		if (spriteData == hitSprite && spriteBody == hitBody)
-		{
-			enemyDatas.eraseObject(hitSprite, true);
+		projectileSprite = Sprite::create("images/Effect/Dragon_Fire_Effect_1.png");
+		projectileSprite->setScale(2.0f);
 
-			for (int i = 0; i < enemyBodies.size(); i++)
-			{
-				if (i == hitIndex)
-				{
-					enemyBodies.erase(enemyBodies.begin() + i);
-					positions.erase(positions.begin() + i);
-					positionDummies.erase(positionDummies.begin() + i);
-				}
-			}
+		auto fireAnimation = character->createAnimationMultiSprite("images/Effect/Dragon_Fire_Effect_%d.png", 5, 0.2f);
 
-			this->scheduleOnce(schedule_selector(HelloWorld::clearSpriteBody), 0.01f);
-		}
+		auto fireAnimate = Animate::create(fireAnimation);
+
+		projectileSprite->runAction(fireAnimate);
+
+		projectileBody = this->addBody(positionDummy, projectileSprite->getContentSize() / 2, b2_dynamicBody, projectileSprite, 3, FIRE, PLAYER);
+		projectileBody->ApplyLinearImpulse(b2Vec2(-1000.f, 0.f), projectileBody->GetWorldCenter(), true);
+
+		projectileBodies.push_back(projectileBody);
 	}
+	
+	this->unschedule(schedule_selector(HelloWorld::ShootFire));
 }
-
-//void HelloWorld::FireDeath(float dt)
-//{
-//	log("CallFunc");
-//
-//	destoryFire = false;
-//
-//	auto fireAnimation = character->createAnimationMultiSprite("images/Effect/Dragon_Fire_Effect_%d.png", 5, 0.2f);
-//	
-//	auto fireAnimate = Animate::create(fireAnimation);
-//
-//	auto fireSeq = Sequence::create(fireAnimate, DelayTime::create(0.5f), CallFunc::create(CC_CALLBACK_0(HelloWorld::clearSpriteBody, this, 21)), nullptr);
-//
-//	fireSprite->runAction(fireSeq);
-//}
 
 void HelloWorld::clearSpriteBody(float dt)
 {
+	killSuccess = false;
+
+	destoryFire = false;
+
 	log("Clear Begin");
 
-	for (b2Body* b = _world->GetBodyList(); b; b = b->GetNext())
+	for (int i = 0; i < enemyBodies.size(); i++)
 	{
-		if (b->GetUserData() != nullptr)
+		auto spriteBody = (b2Body*)enemyBodies.at(i);
+		auto spriteData = (Sprite*)enemyDatas.at(i);
+
+		if (spriteData == hitEnemySprite && spriteBody == hitEnemyBody && _world->IsLocked() == false && i == hitIndex)
 		{
-			auto spriteData = (Sprite*)b->GetUserData();
-			
-			if (hitSprite != nullptr)
-			{
-				if (spriteData == hitSprite && b == hitBody && _world->IsLocked() == false)
-				{
-					//log("Get HitPosition Tag : %d", hitPosition->getTag());
+			enemyDatas.eraseObject(hitEnemySprite, true);
+			enemyBodies.erase(enemyBodies.begin() + i);
+			positions.erase(positions.begin() + i);
+			positionDummies.erase(positionDummies.begin() + i);
+								
+			this->removeChild(spriteData, true);
 
-					//hitPosition->removeFromParentAndCleanup(true);
+			_world->DestroyBody(spriteBody);
 
-					this->removeChild(hitSprite, true);
+			log("Clear Done");
 
-					_world->DestroyBody(hitBody);
-					
-					//hitSprite->release();
-					//hitPosition->release();
+			break;
+		}
+	}
 
-					//if (position == hitPosition)
-					//{
-					//	log("Position Remove");
-					//	hitPosition->removeFromParent();
-					//}
+	for (int i = 0; i < projectileBodies.size(); i++)
+	{
+		auto spriteBody = (b2Body*)projectileBodies.at(i);
+		auto spriteData = (Sprite*)spriteBody->GetUserData();
 
-					log("Clear Done");
+		if (spriteData == hitProjectSprite && spriteBody == hitProjectBody && _world->IsLocked() == false && i == hitIndex)
+		{
+			projectileBodies.erase(projectileBodies.begin() + i);
 
-					break;
-				}
-			}
+			this->removeChild(spriteData, true);
+
+			_world->DestroyBody(spriteBody);
+
+			log("Clear Done");
+
+			break;
 		}
 	}
 }
@@ -438,7 +389,6 @@ void HelloWorld::AfterAction(float dt)
 	{
 		effectNormalBody->SetActive(false);
 		effectChargeBody->SetActive(false);
-		effectJumpBody->SetActive(false);
 
 		for (auto i = this->getChildren().begin(); i != this->getChildren().end(); i++)
 		{
@@ -511,17 +461,17 @@ void HelloWorld::CreatePlayerEffectBody()
 {
 	effectDummy1 = Sprite::create("images/Dummy.png");
 	effectDummy2 = Sprite::create("images/Dummy.png");
-	effectDummy3 = Sprite::create("images/Dummy.png");
 
 	player->playerPos = player->playerSprite->convertToWorldSpace(this->getPosition());
 
 	effectDummy1->setPosition(Vec2(player->playerPos.x, player->playerPos.y));
 	effectDummy2->setPosition(Vec2(player->playerPos.x, player->playerPos.y));
-	effectDummy3->setPosition(Vec2(player->playerPos.x, player->playerPos.y));
 
 	effectNormalBody = this->addBody(player->playerPos, Size(effectDummy1->getContentSize() / 4), b2_staticBody, effectDummy1, 0, PLAYER, ENEMY | FIRE);
 	effectChargeBody = this->addBody(player->playerPos, Size(effectDummy2->getContentSize() / 4), b2_staticBody, effectDummy2, 1, PLAYER, ENEMY | FIRE);
-	effectJumpBody = this->addBody(player->playerPos, Size(effectDummy3->getContentSize() / 4), b2_staticBody, effectDummy3, 2, PLAYER, ENEMY | FIRE);
+	playerDamageBody = this->addBody(Vec2(player->playerPos.x, player->playerPos.y), Size(player->playerSprite->getContentSize() / 2), b2_staticBody, player->playerSprite, 2, PLAYER, ENEMY | FIRE);
+	
+	//player->playerSprite->setAnchorPoint(Vec2::ZERO);
 }
 
 b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* sprite, int tag, uint16 categoryBits, uint16 maskBits)
@@ -536,12 +486,7 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		bodyDef.position.Set((point.x + 100) / PTM_RATIO, (point.y + 30) / PTM_RATIO);
 		this->addChild(sprite, 2, 10);
 		bodyDef.userData = sprite;
-
-		//bodyData->Name = "Effect";
-		//bodyData->Tag = 0;
-
-		//body->SetUserData(bodyData);
-
+		 
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
 
@@ -573,11 +518,6 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		this->addChild(sprite, 2, 10);
 		bodyDef.userData = sprite;
 
-		//bodyData->Name = "Effect";
-		//bodyData->Tag = 0;
-
-		//body->SetUserData(bodyData);
-
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
 
@@ -604,14 +544,10 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 
 	else if (tag == 2)
 	{
-		bodyDef.position.Set((point.x) / PTM_RATIO, (point.y + 30) / PTM_RATIO);
-		this->addChild(sprite, 2, 10);
+		bodyDef.position.Set((point.x) / PTM_RATIO, (point.y) / PTM_RATIO);
 		bodyDef.userData = sprite;
-
-		//bodyData->Name = "Effect";
-		//bodyData->Tag = 0;
-
-		//body->SetUserData(bodyData);
+		this->addChild(sprite, 2);
+		//sprite->setAnchorPoint(Vec2::ZERO);
 
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
@@ -622,7 +558,7 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		fixtureDef.filter.categoryBits = categoryBits;
 		fixtureDef.filter.maskBits = maskBits;
 
-		dynamicBox.SetAsBox(size.width * 2 / PTM_RATIO, size.height / PTM_RATIO);
+		dynamicBox.SetAsBox(size.width / PTM_RATIO, size.height / PTM_RATIO);
 
 		fixtureDef.shape = &dynamicBox;
 
@@ -631,10 +567,10 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		fixtureDef.restitution = 0.8f;
 
 		body->CreateFixture(&fixtureDef);
-		effectJumpBody = body;
-		effectDummy3 = sprite;
+		
+		playerDamageBody = body;
 
-		effectJumpBody->SetActive(false);
+		playerDamageBody->SetActive(true);
 	}
 
 	else if (tag == 3)
@@ -642,11 +578,6 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		bodyDef.position.Set((point.x + 50) / PTM_RATIO, (point.y) / PTM_RATIO);
 		this->addChild(sprite, 2, 21);
 		bodyDef.userData = sprite;
-
-		//bodyData->Name = "Fire";
-		//bodyData->Tag = 2;
-
-		//body->SetUserData(bodyData);
 
 		body = _world->CreateBody(&bodyDef);
 		body->SetGravityScale(0.0f);
@@ -669,13 +600,12 @@ b2Body* HelloWorld::addBody(Vec2 point, Size size, b2BodyType bodyType, Sprite* 
 		projectileBody = body;
 
 		projectileBody->SetActive(true);
-		//projectileBody->SetBullet(true);
+		projectileBody->SetBullet(true);
 	}
 
 	else
 	{
 		bodyDef.position.Set(((point.x) / PTM_RATIO), ((point.y) / PTM_RATIO));
-		//sprite->setName("Enemy");
 
 		this->addChild(sprite, 2);
 		bodyDef.userData = sprite;
@@ -731,85 +661,53 @@ void HelloWorld::BeginContact(b2Contact* contact)
 		{
 			if (bodyA == enemyBodies.at(i))
 			{
-				hitSprite = (Sprite*)bodyA->GetUserData();
-				
-				///tmap->removeChild(position, true);
-
-				log("HitSprite Name : %s", hitSprite->getName().c_str());
+				hitEnemySprite = (Sprite*)bodyA->GetUserData();
 
 				hitIndex = i;
 
-				log("Vector Index Number : %d", i);
-
 				hitPosition = positions.at(i);
 
-				log("Get HitPosition Tag : %d", hitPosition->getTag());
+				hitEnemyBody = enemyBodies.at(i);
 
-				hitBody = enemyBodies.at(i);
-
-				hitBody->ApplyForce(b2Vec2(1000, 800), hitBody->GetWorldCenter(), true);
+				hitEnemyBody->ApplyForce(b2Vec2(1000, 800), hitEnemyBody->GetWorldCenter(), true);
 
 				killSuccess = true;
 			}
 
 			else if (bodyB == enemyBodies.at(i))
 			{
-				hitSprite = (Sprite*)bodyB->GetUserData();
-
-				log("HitSprite Name : %s", hitSprite->getName().c_str());
+				hitEnemySprite = (Sprite*)bodyB->GetUserData();
 
 				hitIndex = i;
 
-				log("Vector Index Number : %d", i);
-
 				hitPosition = positions.at(i);
 
-				hitBody = enemyBodies.at(i);
+				hitEnemyBody = enemyBodies.at(i);
 
-				hitBody->ApplyForce(b2Vec2(1000, 800), hitBody->GetWorldCenter(), true);
+				hitEnemyBody->ApplyForce(b2Vec2(1000, 800), hitEnemyBody->GetWorldCenter(), true);
 
 				killSuccess = true;
 			}
 		}
 	}
-	
-	//else if (impacted->getTag() == 10 && impact->getName() == "Dragon" || impacted->getTag() == 10 && impact->getName() == "Bird" || impacted->getTag() == 10 && impact->getName() == "DK")
-	
-	//else if (impact->getName() == "Dragon" ||impact->getName() == "Bird" || impact->getName() == "DK")
-	//{
-	//	log("Enemy Vs Player");
-
-	//	for (int i = 0; i < enemyBodies.size(); i++)
-	//	{
-	//		if (bodyA == enemyBodies.at(i))
-	//		{
-	//			hitSprite = (Sprite*)bodyA->GetUserData();
-
-	//			//hitSprite->setVisible(false);
-	//			log("HitSprite Name : %s", hitSprite->getName().c_str());
-
-	//			log("Vector Index Number : %d", i);
-
-	//			hitIndex = i;
-
-	//			hitBody = enemyBodies.at(i);
-
-	//			hitBody->ApplyForce(b2Vec2(1000, 800), hitBody->GetWorldCenter(), true);
-
-	//			killSuccess = true;
-	//		}
-	//	}
-	//}
 
 	if (impact->getTag() == 10 && impacted->getTag() == 21)
 	{
 		log("Fire Vs Player");
 
-		log("Density : %f", fixB->GetDensity());
-		log("Restitution : %f", fixB->GetRestitution());
-		log("Friction : %f", fixB->GetFriction());
+		for (int i = 0; i < projectileBodies.size(); i++)
+		{
+			if (bodyA == projectileBodies.at(i))
+			{
+				hitProjectSprite = (Sprite*)bodyA->GetUserData();
 
-		destoryFire = true;
+				hitIndex = i;
+
+				hitProjectBody = projectileBodies.at(i);
+
+				destoryFire = true;
+			}
+		}
 	}
 }
 
@@ -820,16 +718,11 @@ void HelloWorld::tick(float dt)
 
 	_world->Step(dt, velocityIterations, positionIterations);
 
-	//log("tmap position : %f ... %f", tmap->getPositionX(), tmap->getPositionY());
-	//log("tmap2 position : %f ... %f", tmap2->getPositionX(), tmap2->getPositionY());
-
 	for (b2Body* b = _world->GetBodyList(); b; b = b->GetNext())
 	{
 		if (b->GetUserData() != nullptr)
 		{
 			Sprite *spriteData = (Sprite*)b->GetUserData();
-
-			//log("Check SpriteData Name : %s", spriteData->getName().c_str());
 
 			if (spriteData->getName() != "Worm" || spriteData->getName() != "Crap" || spriteData->getName() != "DK")
 			{
@@ -843,10 +736,10 @@ void HelloWorld::tick(float dt)
 		}
 	}
 
-	log("EnemyDatas Size : %d", enemyDatas.size());
-	log("EnemyBoides Size : %d", enemyBodies.size());
-	log("Position Dummies : %d", positionDummies.size());
-	log("Position Size : %d", positions.size());
+	//log("EnemyDatas Size : %d", enemyDatas.size());
+	//log("EnemyBoides Size : %d", enemyBodies.size());
+	//log("Position Dummies : %d", positionDummies.size());
+	//log("Position Size : %d", positions.size());
 
 	if (enemyDatas.size() != 0)
 	{
@@ -858,13 +751,13 @@ void HelloWorld::tick(float dt)
 			auto pos = (Sprite*)positions.at(i);
 
 			positionDummy = positionDummies.at(i);
-			
-			log("Position Dummy %d Postion : %f ... %f", i, positionDummies.at(i).x, positionDummies.at(i).y);
 
-			log("Position %d Check : %d", i, positions.at(i)->getTag());
+			//log("Position Dummy %d Postion : %f ... %f", i, positionDummies.at(i).x, positionDummies.at(i).y);
+
+			//log("Position %d Check : %d", i, positions.at(i)->getTag());
 
 			positionDummy = Vec2(pos->convertToWorldSpace(this->getPosition()).x, pos->convertToWorldSpace(this->getPosition()).y + 30);
-			
+
 			//log("Get esp position : %f .... %f", eSp->getPositionX(), eSp->getPositionY());
 
 			if (!killSuccess && eSp->getPosition().x > 0.f)
@@ -880,9 +773,9 @@ void HelloWorld::tick(float dt)
 				eSp->setRotation(-1 * CC_RADIANS_TO_DEGREES(enemyBody->GetAngle()));
 			}
 
-			if (killSuccess)
+			else if (killSuccess && hitEnemySprite != nullptr)
 			{
-				hitSprite->setPosition(Vec2(hitBody->GetPosition().x * PTM_RATIO, hitBody->GetPosition().y * PTM_RATIO));
+				hitEnemySprite->setPosition(Vec2(hitEnemyBody->GetPosition().x * PTM_RATIO, hitEnemyBody->GetPosition().y * PTM_RATIO));
 
 				deathScale -= 0.06f;
 
@@ -891,39 +784,93 @@ void HelloWorld::tick(float dt)
 					deathScale = 0.f;
 				}
 
-				hitSprite->setScale(deathScale);
+				hitEnemySprite->setScale(deathScale);
 
-				bool oneTime = this->isScheduled(schedule_selector(HelloWorld::EnemyDeath));
-
-				if (!oneTime)
+				if (hitEnemySprite->getScale() == 0)
 				{
-					this->scheduleOnce(schedule_selector(HelloWorld::EnemyDeath), 1);
-					oneTime = true;
+					bool oneTime = this->isScheduled(schedule_selector(HelloWorld::clearSpriteBody));
+
+					if (!oneTime)
+					{
+						this->scheduleOnce(schedule_selector(HelloWorld::clearSpriteBody), 1);
+						oneTime = true;
+					}
 				}
 			}
 
 			if (eSp->getPosition().x < 0.f)
 			{
-				//eSp->setVisible(false);
-
-				hitSprite = enemyDatas.at(i);
-				hitBody = enemyBodies.at(i);
+				hitEnemySprite = enemyDatas.at(i);
+				hitEnemyBody = enemyBodies.at(i);
 				hitIndex = i;
 				hitPosition = positions.at(i);
-				log("Get HitPosition Tag : %d", hitPosition->getTag());
 				killSuccess = true;
 			}
+
+			if (eSp->getPosition().x < 480)
+			{
+				fireInterval -= 0.3f;
+
+				if (fireInterval < 0 && !destoryFire && !killSuccess)
+				{
+					fireInterval = 20.0f;
+
+					projectileSprite = Sprite::create("images/Effect/Dragon_Fire_Effect_1.png");
+
+					projectileSprite->setScale(2.0f);
+
+					auto fireAnimation = character->createAnimationMultiSprite("images/Effect/Dragon_Fire_Effect_%d.png", 5, 0.2f);
+
+					auto fireAnimate = Animate::create(fireAnimation);
+
+					projectileSprite->runAction(fireAnimate);
+
+					projectileBody = this->addBody(positionDummy, projectileSprite->getContentSize() / 2, b2_dynamicBody, projectileSprite, 3, FIRE, PLAYER);
+
+					projectileBody->ApplyLinearImpulse(b2Vec2(-1000.f, 0.f), projectileBody->GetWorldCenter(), true);
+
+					projectileBodies.push_back(projectileBody);
+
+					if (!projectileBodies.empty())
+					{
+						for (int i = 0; i < projectileBodies.size(); i++)
+						{
+							if (projectileSprite != nullptr)
+							{
+								if (projectileSprite->getPositionX() < player->playerSprite->getPositionX())
+								{
+									hitProjectBody = projectileBodies.at(i);
+
+									hitIndex = i;
+
+									destoryFire = true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (destoryFire)
+	{
+		bool oneTime = this->isScheduled(schedule_selector(HelloWorld::clearSpriteBody));
+
+		if (!oneTime)
+		{
+			this->scheduleOnce(schedule_selector(HelloWorld::clearSpriteBody), 0.1f);
+			oneTime = true;
 		}
 	}
 
 	if (countStart)
 	{
 		chargeCount += 0.1f;
-		//log("Charge Count : %f", chargeCount);
 
 		if (chargeCount > 2.0f)
 		{
-			player->playerAnimation = character->createAnimationMultiSprite("images/HI/HI_Charge_%d.png", 3, 0.07f);
+			player->playerAnimation = character->createAnimationMultiSprite("images/PlayerSwordsman/Charge_%d.png", 3, 0.07f);
 			player->playerAnimate = Animate::create(player->playerAnimation);
 			character->switchingAction(player->playerSprite, player->playerAnimate, false);
 		}
@@ -941,36 +888,12 @@ void HelloWorld::tick(float dt)
 		progressTimer->setColor(Color3B::GRAY);
 		progressTimer->setPercentage(progressTimer->getPercentage() + inverseTransformCount);
 
-		log("Transbutton Percentage : %f", progressTimer->getPercentage());
-
 		if (progressTimer->getPercentage() == 100)
 		{
 			progressTimer->setPercentage(0);
 
 			isTransFormed = false;
 		}
-	}
-
-	if (enemyBodyPos.x < 400)
-	{
-		if (numberOfFire < 11 && !destoryFire && !killSuccess)
-		{
-			if (!this->isScheduled(schedule_selector(HelloWorld::ShootFire)))
-			{
-				this->schedule(schedule_selector(HelloWorld::ShootFire), 2);
-			}
-		}
-
-		//else if (destoryFire)
-		//{
-		//	bool oneTime = this->isScheduled(schedule_selector(HelloWorld::FireDeath));
-
-		//	if (!oneTime)
-		//	{
-		//		this->scheduleOnce(schedule_selector(HelloWorld::FireDeath), 1);
-		//		oneTime = true;
-		//	}
-		//}
 	}
 }
 
@@ -1037,6 +960,7 @@ bool HelloWorld::onTouchBegan(Touch* touch, Event* event)
 
 		isAttack = true;
 	}
+
 	else if (r1.containsPoint(touchPoint1) && isAttack)
 	{
 		return false;
@@ -1057,10 +981,6 @@ bool HelloWorld::onTouchBegan(Touch* touch, Event* event)
 	{
 		log("Transfrom");
 
-		transformButton->setColor(Color3B(Color4B(transButtonColor.r, transButtonColor.g, transButtonColor.b, 0)));
-
-		player->playerAction(player->TWALK);
-
 		isTransFormed = true;
 	}
 	else if (r3.containsPoint(touchPoint3) && isTransFormed)
@@ -1075,48 +995,60 @@ void HelloWorld::onTouchEnded(Touch* touch, Event* event)
 {
 	countStart = false;
 
+	if (isTransFormed)
+	{
+		transformButton->setColor(Color3B(Color4B(transButtonColor.r, transButtonColor.g, transButtonColor.b, 0)));
+
+		player->playerAction(player->TWALK);
+	}
+
 	if (isAttack)
 	{
 		attackButton->setColor(Color3B::GRAY);
-
-		auto effect = Sprite::create();
 
 		if (!isTransFormed)
 		{
 			if (chargeCount < 5.0f)
 			{
-				effect = Sprite::create("images/Effect/HI_Effect_Charge_1.png");
+				effectSprite = Sprite::create("images/Effect/cut_b_0001.png");
 
-				this->addChild(effect, 3, 31);
+				auto effectAnimation = character->createAnimationMultiSprite("images/Effect/cut_b_000%d.png", 5, 0.2f);
 
-				player->Attack(isTransFormed, effect, effectNormalBody, chargeCount);
+				auto effectAnimate = Animate::create(effectAnimation);
+
+				character->switchingAction(effectSprite, effectAnimate, true);
+
+				this->addChild(effectSprite, 3, 31);
+
+				player->Attack(isTransFormed, effectSprite, effectNormalBody, chargeCount);
 			}
+
 			else
 			{
-				effect = Sprite::create("images/Effect/HI_Effect_Charge_1.png");
+				effectSprite = Sprite::create("images/Effect/HI_Effect_Charge_1.png");
 
-				this->addChild(effect, 3, 31);
+				this->addChild(effectSprite, 3, 31);
 
-				player->Attack(isTransFormed, effect, effectChargeBody, chargeCount);
+				player->Attack(isTransFormed, effectSprite, effectChargeBody, chargeCount);
 			}
 		}
 		else
 		{
 			if (chargeCount < 5.0f)
 			{
-				effect = Sprite::create("images/Effect/HI2_Effect_Normal_1.png");
+				effectSprite = Sprite::create("images/Effect/HI2_Effect_Normal_1.png");
 
-				this->addChild(effect, 3, 31);
+				this->addChild(effectSprite, 3, 31);
 
-				player->Attack(isTransFormed, effect, effectNormalBody, chargeCount);
+				player->Attack(isTransFormed, effectSprite, effectNormalBody, chargeCount);
 			}
 			else
 			{
-				effect = Sprite::create("images/Effect/HI2_Effect_Charge_1.png");
+				effectSprite = Sprite::create("images/Effect/HI2_Effect_Charge_1.png");
 
-				this->addChild(effect, 3, 31);
+				this->addChild(effectSprite, 3, 31);
 
-				player->Attack(isTransFormed, effect, effectChargeBody, chargeCount);
+				player->Attack(isTransFormed, effectSprite, effectChargeBody, chargeCount);
 			}
 		}
 	}
@@ -1127,17 +1059,6 @@ void HelloWorld::onTouchEnded(Touch* touch, Event* event)
 
 		player->Jump(isTransFormed);
 		//isJumped = false;
-	}
-
-	if (isJumped && isAttack)
-	{
-		auto effect = Sprite::create();
-
-		effect = Sprite::create("images/Effect/HI2_Effect_Charge_1.png");
-
-		this->addChild(effect, 3, 31);
-
-		player->Attack(isTransFormed, effect, effectJumpBody, chargeCount);
 	}
 
 	bool oneTime = this->isScheduled(schedule_selector(HelloWorld::AfterAction));
@@ -1174,6 +1095,10 @@ void HelloWorld::onDraw(const Mat4 &transform, uint32_t flags)
 
 HelloWorld::~HelloWorld()
 {
-	delete _world;
+	delete  _world;
+	delete 	character;
+	delete  player;
+	delete  enemy;
+
 	_world = nullptr;
 }

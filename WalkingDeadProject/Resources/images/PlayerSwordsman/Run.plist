@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>Run_003.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{114,228},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Run_1.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{226,228},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Run_10.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,343},{113,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{113,114}</string>
+			</dict>
+			<key>Run_11.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{236,0},{115,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{115,114}</string>
+			</dict>
+			<key>Run_12.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{351,0},{115,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{115,114}</string>
+			</dict>
+			<key>Run_2.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,114},{115,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{115,114}</string>
+			</dict>
+			<key>Run_3.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,0},{118,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{118,114}</string>
+			</dict>
+			<key>Run_4.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{113,343},{113,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{113,114}</string>
+			</dict>
+			<key>Run_5.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{227,114},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Run_6.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{226,342},{110,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{110,114}</string>
+			</dict>
+			<key>Run_7.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,229},{114,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{114,114}</string>
+			</dict>
+			<key>Run_8.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{118,0},{118,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{118,114}</string>
+			</dict>
+			<key>Run_9.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{114,114},{113,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{113,114}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>Run.png</string>
+			<key>realTextureFileName</key>
+			<string>Run.png</string>
+			<key>size</key>
+			<string>{466,457}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>466</integer>
+			<key>height</key>
+			<integer>457</integer>
+		</dict>
+	</dict>
+</plist>

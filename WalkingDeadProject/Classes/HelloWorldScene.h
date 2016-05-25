@@ -24,8 +24,8 @@ enum _entityCategory {
 
 enum StageNumber
 {
-	Stage0 = 0,
-	Stage1 = 1
+	Stage0 = 1,
+	Stage1 = 2
 };
 
 struct BodyUserData {
@@ -46,8 +46,6 @@ public:
 	virtual bool init();
 
 	CREATE_FUNC(HelloWorld);
-
-	//float backgroud_x;
 
 	int count;
 
@@ -83,15 +81,12 @@ public:
 	virtual void onTouchEnded(Touch* touch, Event* event);
 
 	void AfterAction(float dt);
-	void EnemyDeath(float dt);
 	void ShootFire(float dt);
 
-	//void FireDeath(float dt);
 	void SpawnEnemy();
 	void onDraw(const cocos2d::Mat4& transform, uint32_t flags);
 	void BeginContact(b2Contact* contact);
-	//void swap
-	//std::swa
+
 	////////////////////////////////////////
 	GLESDebugDraw* m_debugDraw;
 	Size winSize;
@@ -104,31 +99,30 @@ public:
 	bool isTransFormed;
 
 	int initialSize;
-
+	
 	ProgressTimer* progressTimer;
 
 	b2Body *dragBody;
 	b2Body* enemyBody;
 	vector<b2Body*> enemyBodies;
 	Vector<Sprite*> enemyDatas;
-	//Array* enemyDatas;
-	//Array* enemyBodies;
 
 	b2Body* effectNormalBody;
 	b2Body* effectChargeBody;
 	b2Body* effectJumpBody;
+	b2Body* playerDamageBody;
 	b2Body* projectileBody;
+	vector<b2Body*> projectileBodies;
 
-	b2Body* hitBody;
-	Sprite* hitSprite;
+	b2Body* hitEnemyBody;
+	Sprite* hitEnemySprite;
+	b2Body* hitProjectBody;
+	Sprite* hitProjectSprite;
 
 	vector<Sprite*> positionsCharacter;
 	vector<Sprite*> positions;
-	vector<Sprite*> fires;
 	vector<Sprite*> worms;
 	vector<Sprite*> craps;
-	//Array* worms;
-	//Array* craps;
 
 	vector<TMXTiledMap*> tmaps;
 	TMXTiledMap* tmap;
@@ -137,23 +131,25 @@ public:
 	TMXLayer* metainfo;
 	TMXLayer* test;
 
-	//TMXObjectGroup* playerSpawnPoint;
 	TMXObjectGroup* wormspawnPoint;
 	TMXObjectGroup* crapspawnPoint;
-	//TMXObjectGroup* dkSpanwPoint;
 
 	vector<Sprite*> wormPositions;
 	vector<Sprite*> crapPositions;
 
 	Sprite* dyingEnemy;
-	Sprite* fireSprite;
+	Sprite* projectileSprite;
+
 	Sprite* worm;
 	Sprite* crap;
+
 	Sprite* position;
 	Sprite* hitPosition;
+
 	Sprite* effectDummy1;
 	Sprite* effectDummy2;
 	Sprite* effectDummy3;
+	Sprite* effectSprite;
 
 	Sprite* attackButton;
 	Sprite* jumpButton;
@@ -171,6 +167,7 @@ public:
 	float transbuttonAlpha = 255;
 	float inverseTransformCount = 0.f;
 	float attackDelay = 2.0f;
+	float fireInterval = 20.0f;
 
 	int hitIndex = 0;
 	int numberOfFire = 10;

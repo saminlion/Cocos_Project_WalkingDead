@@ -42,7 +42,6 @@ public:
 	void playerAction(int actionNumber); 
 	void Attack(bool isTransformed, Sprite* effect, b2Body* effectBody, float chargeCount);
 	void Jump(bool isTransformed);
-	void JumpAttack(bool isTransformed, Sprite* effect, b2Body* effectBody, float chargeCount);
 };
 
 #endif // !__PLAYER_H__

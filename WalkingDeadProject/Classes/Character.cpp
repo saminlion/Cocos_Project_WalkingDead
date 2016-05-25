@@ -8,29 +8,20 @@ Character::Character()
 	_spawnPositions.clear();
 	_wormPositions.clear();
 	_crapPositions.clear();
-	_dkPositions.clear();
-//	enemyPositions.clear();
 	wormsPs.clear();
 	crapsPs.clear();
-	dkSPs.clear();
 }
 
 void Character::ClearOnce()
 {
 	wormPositions.clear();
-	crapPositions.clear();
-	dkPositions.clear();
-	setDKPosition().clear();
 	setCrapPosition().clear();
 	setWormPosition().clear();
-	//setEnemyPosition().clear();
 	_spawnPositions.clear();
 	_wormPositions.clear();
 	_crapPositions.clear();
-	_dkPositions.clear();
 	wormsPs.clear();
 	crapsPs.clear();
-	dkSPs.clear();
 }
 
 /**
@@ -59,6 +50,28 @@ Animation* Character::createAnimationSpriteSheet(Texture2D* texture, int numberO
 
 		animation->addSpriteFrameWithTexture(texture, Rect(colum * width, row * height, width, height));
 	}
+
+	return animation;
+}
+
+Animation* Character::createAnimationPlist(const std::string plist, const char* spriteName, int numberOfSprites, float delay)
+{
+	auto cache = SpriteFrameCache::getInstance();
+	
+	cache->addSpriteFramesWithFile(plist);
+	
+	Vector<SpriteFrame*> animFrames;
+
+	char str[100] = { 0 };
+
+	for (int i = 1; i < numberOfSprites; i++)
+	{
+		sprintf(str, spriteName, i);
+		SpriteFrame* frame = cache->getSpriteFrameByName(str);
+		animFrames.pushBack(frame);
+	}
+
+	auto animation = Animation::createWithSpriteFrames(animFrames, delay);
 
 	return animation;
 }
@@ -118,7 +131,6 @@ void Character::getwormspawnPointPositions(TMXObjectGroup* objects)
 
 		Vec2 initPosition = Vec2(vx, vy);
 
-		//_spawnPositions.push_back(initPosition);
 		_wormPositions.push_back(initPosition);
 
 	}
@@ -139,8 +151,6 @@ vector<Sprite*> Character::setWormPosition()
 		wormPositions.push_back(initPositionSprite);
 	}
 
-	//_wormPositions.clear();
-
 	return wormPositions;
 }
 
@@ -159,7 +169,6 @@ void Character::getcrapspawnPointPositions(TMXObjectGroup* objects)
 		Vec2 initPosition = Vec2(vx, vy);
 
 		_crapPositions.push_back(initPosition);
-		//_spawnPositions.push_back(initPosition);
 	}
 }
 
@@ -178,64 +187,5 @@ vector<Sprite*> Character::setCrapPosition()
 		crapPositions.push_back(initPositionSprite);
 	}
 
-	//_crapPositions.clear();
-
 	return crapPositions;
 }
-
-
-
-vector<Sprite*> Character::setDKPosition()
-{
-	for (int i = 0; i < _spawnPositions.size(); i++)
-	{
-		auto vec2 = (Vec2)_spawnPositions.at(i);
-
-		initPositionSprite = Sprite::create("images/Dummy.png");
-
-		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
-
-		initPositionSprite->setTag(i);
-
-		dkPositions.push_back(initPositionSprite);
-	}
-
-	return dkPositions;
-}
-
-void Character::getDKSpawnPointPositions(TMXObjectGroup* objects)
-{
-	dkSPs = objects->getObjects();
-
-	for (auto enemySP : dkSPs)
-	{
-		auto VMobj = enemySP.asValueMap();
-
-		int vx = VMobj["x"].asInt();
-		int vy = VMobj["y"].asInt();
-
-		Vec2 initPosition = Vec2(vx, vy);
-
-		_spawnPositions.push_back(initPosition);
-	}
-}
-
-//vector<Sprite*> Character::setEnemyPosition()
-//{
-//	log("SpawnPoints Size : %d", _spawnPositions.size());
-//
-//	for (int i = 0; i < _spawnPositions.size(); i++)
-//	{
-//		auto vec2 = (Vec2)_spawnPositions.at(i);
-//
-//		initPositionSprite = Sprite::create("images/Dummy.png");
-//
-//		initPositionSprite->setPosition(vec2.x, vec2.y + 30);
-//
-//		initPositionSprite->setTag(i);
-//
-//		enemyPositions.push_back(initPositionSprite);
-//	}
-//
-//	return enemyPositions;
-//}

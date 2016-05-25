@@ -17,15 +17,12 @@ public:
 
 	std::vector<Sprite*> CreateFirstEnemy(std::vector<Sprite*> positions);
 	std::vector<Sprite*> CreateSecondEnemy(std::vector<Sprite*> positions);
-	Vector<Sprite*> CreateDK();
 
 	vector<Sprite*> firstEnemySprites;
 	std::vector<Sprite*> secondEnemySprites;
 
 	Sprite* fireSprite;
 	Sprite* firstEnemySprite;
-
-	Vector<Sprite*> dkSprites;
 
 	Animation* firstEnemyAnimation;
 	Animate* firstEnemyAnimate;
@@ -34,12 +31,7 @@ public:
 	Animation* secondEnemyAnimation;
 	Animate* secondEnemyAnimate;
 	Sequence* crapsequence;
-
-	Animation* dkAnimation;
-	Animate* dkAnimate;
-	Sequence* dkSequence;
-
-
+	
 	//Fire
 
 	//void ShootFire(b2Body* fireBody, Sprite* fire);

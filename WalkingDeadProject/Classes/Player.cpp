@@ -38,7 +38,7 @@ void Player::Attack(bool isTransformed, Sprite* effect, b2Body* effectBody, floa
 	}
 
 	effect->setPosition(Vec2(playerPos.x + 90, playerPos.y + 30));
-	effect->setScale(1.5f);
+	effect->setScale(0.2f);
 }
 
 void Player::Jump(bool isTransformed)
@@ -64,50 +64,23 @@ void Player::Jump(bool isTransformed)
 	}
 }
 
-void Player::JumpAttack(bool isTransformed, Sprite* effect, b2Body* effectBody, float chargeCount)
-{
-	effectBody->SetActive(true);
-
-	if (!isTransformed)
-	{
-		playerAction(UJUMP);
-
-		auto jumpUp = MoveBy::create(1.f, Vec2(0, 50));
-		auto jumpDown = jumpUp->reverse();
-		jumpAction = Sequence::create(jumpUp, jumpDown, CallFunc::create(CC_CALLBACK_0(Player::playerAction, this, UWALK)), nullptr);
-		playerSprite->runAction(jumpAction);
-	}
-
-	else
-	{
-		playerAction(TJUMP);
-
-		auto jumpUp = MoveBy::create(1.f, Vec2(0, 50));
-		auto jumpDown = jumpUp->reverse();
-		jumpAction = Sequence::create(jumpUp, jumpDown, CallFunc::create(CC_CALLBACK_0(Player::playerAction, this, TWALK)), nullptr);
-		playerSprite->runAction(jumpAction);
-		playerAction(UNATTACK);
-	}
-
-	effect->setPosition(Vec2(playerPos.x + 90, playerPos.y + 30));
-	effect->setScale(1.5f);
-}
-
 void Player::playerAction(int actionNumber)
 {
-	//playerSprite->stopAllActions();
+	playerSprite->stopAllActions();
 
 	switch (actionNumber)
 	{
 	case UWALK:
-		playerAnimation = Character::createAnimationMultiSprite("images/PlayerKnight/Walk (%d).png", 10, 0.3f);
+		log("Walk");
+		playerAnimation = Character::createAnimationMultiSprite("images/PlayerKnight/Run (%d).png", 10, 0.3f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(UWALK);
 		Character::switchingAction(playerSprite, playerAnimate, true);
 		break;
 
 	case TWALK:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI2/HI2_Walk_%d.png", 8, 0.3f);
+		log("Trans Walk");
+		playerAnimation = Character::createAnimationPlist("images/PlayerSwordsman/Run.plist", "Run_%d.png", 8, 0.3f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(TWALK);
 		Character::switchingAction(playerSprite, playerAnimate, true);
@@ -121,21 +94,21 @@ void Player::playerAction(int actionNumber)
 		break;
 
 	case TNATTACK:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI2/HI2_Attack_%d.png", 7, 0.1f);
+		playerAnimation = Character::createAnimationPlist("images/PlayerSwordsman/Attack.plist", "Attack_%d.png", 14, 0.1f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(TNATTACK);
 		Character::switchingAction(playerSprite, playerAnimate, false);
 		break;
 
 	case UCATTACK:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI/HI_Charge_%d.png", 6, 0.1f);
+		playerAnimation = Character::createAnimationMultiSprite("images/PlayerKnight/JumpAttack (%d).png", 10, 0.1f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(UCATTACK);
 		Character::switchingAction(playerSprite, playerAnimate, false);
 		break;
 
 	case TCATTACK:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI2/HI2_Charge_%d.png", 7, 0.1f);
+		playerAnimation = Character::createAnimationMultiSprite("images/PlayerSwordsman/Attack_%d.png", 14, 0.1f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(TCATTACK);
 		Character::switchingAction(playerSprite, playerAnimate, false);
@@ -149,7 +122,7 @@ void Player::playerAction(int actionNumber)
 		break;
 
 	case TJUMP:
-		playerAnimation = Character::createAnimationMultiSprite("images/HI2/HI2_Jump_%d.png", 9, 0.3f);
+		playerAnimation = Character::createAnimationPlist("images/PlayerSwordsman/Jump.plist", "Jump_%d.png", 11, 0.1f);
 		playerAnimate = Animate::create(playerAnimation);
 		playerAnimate->setTag(TJUMP);
 		Character::switchingAction(playerSprite, playerAnimate, false);

@@ -53,29 +53,3 @@ std::vector<Sprite*> Enemy::CreateSecondEnemy(std::vector<Sprite*> positions)
 	return secondEnemySprites;
 }
 
-Vector<Sprite*> Enemy::CreateDK()
-{
-	for (int i = 0; i < 10; i++)
-	{
-		auto dkSprite = Sprite::create("images/Enemy/CursedKnight.png");
-
-		//dkAnimation = Character::createAnimationMultiSprite("images/Enemy/Dragon_Anim_%d.png", 8, 0.2f);
-
-		dkSprite->setTag(i);
-
-		dkSprite->setName("DK");
-
-		dkSprite->setScale(1.f);
-
-		//dkAnimate = Animate::create(dkAnimation);
-
-		//Character::switchingAction(dkSprite, dkAnimate, true);
-
-		dkSprites.pushBack(dkSprite);
-	}
-
-	return dkSprites;
-}
-
-
-

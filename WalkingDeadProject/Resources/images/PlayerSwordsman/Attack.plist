@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>Attack_1.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{114,114},{116,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{116,114}</string>
+			</dict>
+			<key>Attack_10.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{230,114},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Attack_11.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{344,114},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Attack_12.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{230,226},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Attack_13.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{114,228},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Attack_14.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{344,226},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Attack_2.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,266},{145,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{145,114}</string>
+			</dict>
+			<key>Attack_3.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,0},{156,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{156,114}</string>
+			</dict>
+			<key>Attack_4.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{156,0},{156,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{156,114}</string>
+			</dict>
+			<key>Attack_5.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{312,0},{156,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{156,114}</string>
+			</dict>
+			<key>Attack_6.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,114},{152,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{152,114}</string>
+			</dict>
+			<key>Attack_7.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{228,338},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Attack_8.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{114,340},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+			<key>Attack_9.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{340,338},{112,114}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{112,114}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>Attack.png</string>
+			<key>realTextureFileName</key>
+			<string>Attack.png</string>
+			<key>size</key>
+			<string>{468,452}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>468</integer>
+			<key>height</key>
+			<integer>452</integer>
+		</dict>
+	</dict>
+</plist>
